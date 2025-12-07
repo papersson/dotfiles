@@ -1,0 +1,16 @@
+# Secrets and local config
+.zshrc.local
+*.local
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Neovim
+config/nvim/lazy-lock.json
+config/nvim/.claude/
+
+# Cache and generated files
+*.zwc
+.zcompdump*

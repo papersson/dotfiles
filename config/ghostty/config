@@ -1,0 +1,29 @@
+#background-opacity = 0.9
+#background-blur-radius = 20
+#window-theme = dark
+#window-decoration = false
+
+theme = Gruvbox Dark
+
+macos-icon = "holographic"
+
+# Window padding for better visual separation
+window-padding-x = 10
+window-padding-y = 10
+
+# keybinds
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:bottom
+keybind = ctrl+k=goto_split:top
+keybind = ctrl+l=goto_split:right
+
+# cursor and mouse
+cursor-style = block
+cursor-color = #ffffff
+mouse-hide-while-typing = true
+
+copy-on-select = true
+keybind = shift+enter=text:\n
+
+
+window-inherit-working-directory = true

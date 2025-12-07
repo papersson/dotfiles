@@ -1,0 +1,10 @@
+# ~/.zshrc.local - Machine-specific settings and secrets
+# Copy this to ~/.zshrc.local and fill in your values
+# This file is gitignored and should NOT be committed
+
+# API Keys
+export AZURE_OPENAI_API_KEY=""
+export DATABRICKS_CLIENT_SECRET=""
+export GEMINI_API_KEY=""
+
+# Machine-specific paths or settings can go here

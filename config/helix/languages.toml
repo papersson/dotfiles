@@ -1,0 +1,48 @@
+[[language]]
+name = "rust"
+auto-format = true
+
+[[language]]
+name = "python"
+auto-format = true
+language-servers = ["pyright"]
+formatter = { command = "ruff", args = ["format", "-"] }
+
+[[language]]
+name = "typescript"
+auto-format = true
+language-servers = ["deno-lsp"]
+formatter = { command = "deno", args = ["fmt", "--ext", "ts", "-"] }
+
+[[language]]
+name = "javascript"
+auto-format = true
+language-servers = ["deno-lsp"]
+formatter = { command = "deno", args = ["fmt", "--ext", "js", "-"] }
+
+[[language]]
+name = "tsx"
+auto-format = true
+language-servers = ["deno-lsp"]
+formatter = { command = "deno", args = ["fmt", "--ext", "tsx", "-"] }
+
+[[language]]
+name = "jsx"
+auto-format = true
+language-servers = ["deno-lsp"]
+formatter = { command = "deno", args = ["fmt", "--ext", "jsx", "-"] }
+
+# Language server configurations
+[language-server.deno-lsp]
+command = "deno"
+args = ["lsp"]
+
+[language-server.deno-lsp.config.deno]
+enable = true
+unstable = true
+
+[language-server.rust-analyzer.config]
+checkOnSave.command = "clippy"
+
+[language-server.pyright.config.python.analysis]
+typeCheckingMode = "basic"
