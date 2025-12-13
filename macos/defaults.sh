@@ -97,6 +97,9 @@ chflags nohidden ~/Library
 # ==============================================================================
 # Dock
 # ==============================================================================
+# Position dock at bottom
+defaults write com.apple.dock orientation -string "bottom"
+
 # Auto-hide dock
 defaults write com.apple.dock autohide -bool true
 
