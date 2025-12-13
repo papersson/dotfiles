@@ -1,0 +1,22 @@
+# ~/.ripgreprc - ripgrep configuration
+
+# Smart case: case-insensitive unless pattern has uppercase
+--smart-case
+
+# Search hidden files (dotfiles)
+--hidden
+
+# Follow symlinks
+--follow
+
+# Exclude common directories
+--glob=!.git
+--glob=!node_modules
+--glob=!.venv
+--glob=!__pycache__
+--glob=!target
+--glob=!dist
+--glob=!build
+--glob=!.next
+--glob=!.cache
+--glob=!*.lock

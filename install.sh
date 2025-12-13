@@ -74,6 +74,10 @@ info "Setting up Readline..."
 backup_and_link "$DOTFILES/readline/.inputrc" "$HOME/.inputrc"
 backup_and_link "$DOTFILES/readline/.editrc" "$HOME/.editrc"
 
+# Ripgrep
+info "Setting up Ripgrep..."
+backup_and_link "$DOTFILES/ripgrep/.ripgreprc" "$HOME/.ripgreprc"
+
 # Bin scripts
 info "Setting up bin scripts..."
 mkdir -p "$HOME/bin"
@@ -83,6 +87,8 @@ chmod +x "$HOME/bin/tmux-sessionizer"
 echo ""
 info "Done! Dotfiles installed."
 echo ""
-warn "Don't forget to:"
-echo "  1. Create ~/.zshrc.local with your API keys (see zsh/.zshrc.local.example)"
-echo "  2. Run 'source ~/.zshrc' to reload your shell"
+warn "Next steps:"
+echo "  1. Install packages:        brew bundle --file=$DOTFILES/Brewfile"
+echo "  2. Configure macOS:         $DOTFILES/macos/defaults.sh"
+echo "  3. Create local secrets:    cp $DOTFILES/zsh/.zshrc.local.example ~/.zshrc.local"
+echo "  4. Reload shell:            source ~/.zshrc"

@@ -93,6 +93,7 @@ zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 # ------------------------------------------------------------------------------
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 export FORCE_AUTO_BACKGROUND_TASKS=1
 export ENABLE_BACKGROUND_TASKS=1
