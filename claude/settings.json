@@ -27,8 +27,17 @@
       "Bash(tsc:*)",
       "Read(**)",
       "Grep(**)",
-      "Glob(**)"
-    ]
+      "Glob(**)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(for:*)",
+      "Bash(do [ -f \"$f\" ])",
+      "Bash(echo:*)",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "default"
   },
   "hooks": {
     "Notification": [

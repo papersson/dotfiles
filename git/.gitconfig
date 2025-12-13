@@ -1,7 +1,103 @@
-# This is Git's per-user configuration file.
 [user]
 	name = Patrik Persson
 	email = patrikcpersson@gmail.com
-# Please adapt and uncomment the following lines:
-#	name = Patrik Persson
-#	email = patrikcpersson@gmail.com
+
+[core]
+	editor = nvim
+	pager = delta
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[pull]
+	rebase = true
+
+[fetch]
+	prune = true
+
+[rebase]
+	autoStash = true
+
+[merge]
+	conflictStyle = zdiff3
+
+[rerere]
+	enabled = true
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[credential]
+	helper = osxkeychain
+
+[alias]
+	s = status -sb
+	co = checkout
+	br = branch
+	ci = commit
+	ca = commit --amend
+	can = commit --amend --no-edit
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	lg = log --oneline --graph --decorate -20
+	lga = log --oneline --graph --decorate --all -20
+	wip = !git add -A && git commit -m 'wip'
+	undo = reset --soft HEAD~1
+	branches = branch -a
+	stashes = stash list
+	remotes = remote -v
+	# Show what I've done today
+	today = log --since=midnight --author='Patrik' --oneline
+	# Diff staged changes
+	ds = diff --staged
+
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+	dark = true
+	syntax-theme = gruvbox-dark
+	# File headers
+	file-style = "#EBDBB2" bold
+	file-added-label = [+]
+	file-copied-label = [==]
+	file-modified-label = [*]
+	file-removed-label = [-]
+	file-renamed-label = [->]
+	file-decoration-style = "#665c54" ul
+	# Hunk headers
+	hunk-header-style = file line-number syntax
+	hunk-header-decoration-style = "#665c54" box
+	hunk-header-file-style = "#fe8019"
+	hunk-header-line-number-style = "#fabd2f"
+	# Line numbers
+	line-numbers-left-style = "#665c54"
+	line-numbers-right-style = "#665c54"
+	line-numbers-minus-style = "#fb4934"
+	line-numbers-plus-style = "#b8bb26"
+	line-numbers-zero-style = "#665c54"
+	line-numbers-left-format = " {nm:>3} │"
+	line-numbers-right-format = " {np:>3} │"
+	# Diff colors
+	minus-style = syntax "#3c1f1e"
+	minus-emph-style = syntax "#fb4934" bold
+	plus-style = syntax "#1d2a1d"
+	plus-emph-style = syntax "#b8bb26" bold
+	# Whitespace
+	whitespace-error-style = "#fb4934" reverse
+	# Blame
+	blame-palette = "#1d2021" "#282828" "#3c3836" "#504945"
+	blame-format = "{author:>18} ({commit:>8}) {timestamp:<13} "
+	# Merge conflicts
+	merge-conflict-begin-symbol = ▼
+	merge-conflict-end-symbol = ▲
+	merge-conflict-ours-diff-header-style = "#fabd2f" bold
+	merge-conflict-theirs-diff-header-style = "#fabd2f" bold overline
+
+[interactive]
+	diffFilter = delta --color-only

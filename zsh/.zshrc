@@ -29,9 +29,35 @@ path=(
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 HYPHEN_INSENSITIVE="true"
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+
+# Vi-mode configuration (must be set before oh-my-zsh loads)
+VI_MODE_SET_CURSOR=true           # Cursor shape: beam (insert) / block (normal)
+KEYTIMEOUT=1                      # 10ms escape delay (default 400ms is sluggish)
+
+plugins=(git vi-mode zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
+
+# ------------------------------------------------------------------------------
+# Vi-Mode Keybindings (after oh-my-zsh loads)
+# ------------------------------------------------------------------------------
+# Prefix-based history search with j/k in command mode
+bindkey -M vicmd 'k' history-beginning-search-backward
+bindkey -M vicmd 'j' history-beginning-search-forward
+
+# Arrow keys for prefix-based history search (both modes)
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
+
+# Ctrl-p/n also do prefix search (more useful than plain up/down)
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
+
+# Ctrl-u kills to beginning of line (like bash/readline)
+bindkey '^U' backward-kill-line
+
+# Ctrl-k kills to end of line
+bindkey '^K' kill-line
 
 # ------------------------------------------------------------------------------
 # History Configuration
@@ -110,6 +136,27 @@ source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
 
 # Carapace
 source <(carapace _carapace)
+
+# fzf - fuzzy finder (Ctrl-r: history, Ctrl-t: files, Alt-c: cd)
+if [[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/completion.zsh
+  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+fi
+
+# fzf styling (gruvbox colors)
+export FZF_DEFAULT_OPTS='
+  --height=40%
+  --layout=reverse
+  --border=rounded
+  --color=bg+:#3c3836,bg:#282828,spinner:#fb4934,hl:#928374
+  --color=fg:#ebdbb2,header:#928374,info:#8ec07c,pointer:#fb4934
+  --color=marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934
+'
+
+# Use fd for fzf (faster, respects .gitignore)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 
 # ------------------------------------------------------------------------------
 # Local configuration (secrets, machine-specific settings)

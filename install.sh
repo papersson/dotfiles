@@ -69,6 +69,11 @@ mkdir -p "$HOME/.claude"
 backup_and_link "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 backup_and_link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 
+# Readline / libedit
+info "Setting up Readline..."
+backup_and_link "$DOTFILES/readline/.inputrc" "$HOME/.inputrc"
+backup_and_link "$DOTFILES/readline/.editrc" "$HOME/.editrc"
+
 # Bin scripts
 info "Setting up bin scripts..."
 mkdir -p "$HOME/bin"

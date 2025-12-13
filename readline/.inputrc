@@ -1,0 +1,126 @@
+# ~/.inputrc - GNU Readline configuration
+# Affects: bash, python repl, psql, mysql, node repl, gdb, etc.
+# Does NOT affect: zsh (uses ZLE), fish, ipython
+
+# ------------------------------------------------------------------------------
+# Vi Mode
+# ------------------------------------------------------------------------------
+set editing-mode vi
+
+# Show mode in prompt (requires readline 8.1+)
+set show-mode-in-prompt on
+
+# Cursor shape: block for command mode, beam for insert mode
+# Works in terminals that support DECSCUSR (ghostty, kitty, iTerm2, etc.)
+set vi-cmd-mode-string \1\e[2 q\2
+set vi-ins-mode-string \1\e[6 q\2
+
+# Faster escape sequence detection (default 500ms is too slow)
+set keyseq-timeout 50
+
+# ------------------------------------------------------------------------------
+# Completion Behavior
+# ------------------------------------------------------------------------------
+# Case-insensitive completion
+set completion-ignore-case on
+
+# Treat hyphens and underscores as equivalent
+set completion-map-case on
+
+# Show all completions on first TAB instead of bell
+set show-all-if-ambiguous on
+
+# Show all completions if no partial completion possible
+set show-all-if-unmodified on
+
+# Limit completion output (ask if more than N)
+set completion-query-items 200
+
+# Color files by type in completion (like ls)
+set colored-stats on
+
+# Append indicator characters (/, @, *, etc.) to completions
+set visible-stats on
+
+# Color the common prefix in completions
+set colored-completion-prefix on
+
+# Don't expand ~ when completing
+set expand-tilde off
+
+# ------------------------------------------------------------------------------
+# Misc Behavior
+# ------------------------------------------------------------------------------
+# No bell
+set bell-style none
+
+# Allow UTF-8 input and output
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# Don't strip 8th bit
+set meta-flag on
+
+# Words are separated by these characters (for word navigation)
+set word-delimiters " -_/.:;@"
+
+# ------------------------------------------------------------------------------
+# Keybindings - Vi Command Mode
+# ------------------------------------------------------------------------------
+set keymap vi-command
+
+# History search with j/k (searches based on what you've typed)
+"k": history-search-backward
+"j": history-search-forward
+
+# Arrow keys also work for history search
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Ctrl-l clears screen (like in insert mode)
+"\C-l": clear-screen
+
+# Ctrl-a/e for beginning/end of line (useful muscle memory)
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+
+# Ctrl-w deletes word backwards
+"\C-w": backward-kill-word
+
+# ------------------------------------------------------------------------------
+# Keybindings - Vi Insert Mode
+# ------------------------------------------------------------------------------
+set keymap vi-insert
+
+# History search with arrow keys
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Ctrl-l clears screen
+"\C-l": clear-screen
+
+# Ctrl-a/e for beginning/end of line
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+
+# Ctrl-w deletes word backwards
+"\C-w": backward-kill-word
+
+# Ctrl-u kills line backwards (to beginning)
+"\C-u": backward-kill-line
+
+# Ctrl-k kills line forward (to end)
+"\C-k": kill-line
+
+# Word navigation with Ctrl+arrows
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# Alt+arrows also for word navigation
+"\e[1;3C": forward-word
+"\e[1;3D": backward-word
+
+# Ctrl-p/n for history (emacs muscle memory)
+"\C-p": history-search-backward
+"\C-n": history-search-forward

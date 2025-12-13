@@ -1,0 +1,33 @@
+# ~/.editrc - libedit configuration
+# Affects: Python REPL, and other programs using libedit on macOS
+# (macOS ships libedit instead of GNU readline for licensing reasons)
+
+# Vi mode
+bind -v
+
+# History search with arrow keys (in both modes)
+bind "^[[A" ed-search-prev-history
+bind "^[[B" ed-search-next-history
+
+# Ctrl-a/e for beginning/end of line
+bind "^A" ed-move-to-beg
+bind "^E" ed-move-to-end
+
+# Ctrl-w deletes word backwards
+bind "^W" ed-delete-prev-word
+
+# Ctrl-u kills line backwards
+bind "^U" vi-kill-line-prev
+
+# Ctrl-k kills line forward
+bind "^K" ed-kill-line
+
+# Ctrl-l clears screen
+bind "^L" ed-clear-screen
+
+# Ctrl-p/n for history
+bind "^P" ed-search-prev-history
+bind "^N" ed-search-next-history
+
+# Ctrl-r for reverse search
+bind "^R" em-inc-search-prev

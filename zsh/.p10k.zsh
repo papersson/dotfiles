@@ -36,6 +36,7 @@
     vcs                     # git status
     # =========================[ Line #2 ]=========================
     newline                 # \n
+    vi_mode                 # vi mode indicator (NORMAL/INSERT/VISUAL)
     prompt_char             # prompt symbol
   )
 
@@ -191,6 +192,17 @@
   typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=
   # Custom icon.
   # typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⭐'
+
+  ##################################[ vi_mode: vi mode indicator ]##################################
+  # Mode shown in normal (command) mode. Icon + text.
+  typeset -g POWERLEVEL9K_VI_COMMAND_MODE_STRING='NORMAL'
+  typeset -g POWERLEVEL9K_VI_MODE_NORMAL_FOREGROUND=178
+  # Mode shown in insert mode. Empty string hides the segment.
+  typeset -g POWERLEVEL9K_VI_INSERT_MODE_STRING=
+  typeset -g POWERLEVEL9K_VI_MODE_INSERT_FOREGROUND=76
+  # Mode shown in visual mode.
+  typeset -g POWERLEVEL9K_VI_VISUAL_MODE_STRING='VISUAL'
+  typeset -g POWERLEVEL9K_VI_MODE_VISUAL_FOREGROUND=39
 
   ################################[ prompt_char: prompt symbol ]################################
   # Green prompt symbol if the last command succeeded.
