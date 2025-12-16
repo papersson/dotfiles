@@ -3,7 +3,11 @@
 #window-theme = dark
 #window-decoration = false
 
-theme = Gruvbox Dark
+#theme = Catppuccin Frappe
+#theme = Nordfox
+#theme = Everforest Dark Hard
+#theme = Synthwave Alpha
+theme = zenbones-forestbones-dark
 
 macos-icon = "holographic"
 

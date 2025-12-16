@@ -104,8 +104,9 @@ export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 # ------------------------------------------------------------------------------
 alias pcat='pygmentize -f terminal256 -O style=native -g'
 
-alias ll='ls -lah'
-alias la='ls -A'
+alias ls='eza'
+alias ll='eza -lah'
+alias la='eza -a'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias md='mkdir -p'

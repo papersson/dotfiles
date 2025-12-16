@@ -58,6 +58,7 @@ backup_and_link "$DOTFILES/config/tmux/.tmux.conf" "$HOME/.config/tmux/.tmux.con
 info "Setting up Ghostty..."
 mkdir -p "$HOME/.config/ghostty"
 backup_and_link "$DOTFILES/config/ghostty/config" "$HOME/.config/ghostty/config"
+backup_and_link "$DOTFILES/config/ghostty/themes" "$HOME/.config/ghostty/themes"
 
 # Helix
 info "Setting up Helix..."
