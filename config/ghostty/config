@@ -31,3 +31,5 @@ keybind = shift+enter=text:\n
 
 
 window-inherit-working-directory = true
+
+font-family = JetBrainsMono Nerd Font Mono
