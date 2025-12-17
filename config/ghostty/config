@@ -1,13 +1,19 @@
-#background-opacity = 0.9
-#background-blur-radius = 20
-#window-theme = dark
-#window-decoration = false
+# macOS 26 native glass blur (requires tip build)
+background-blur = macos-glass-regular
+background-opacity = 0.85
+
+# Window styling
+macos-titlebar-style = transparent
+macos-window-shadow = false
+window-padding-balance = true
+unfocused-split-opacity = 0.85
 
 #theme = Catppuccin Frappe
+theme = Catppuccin Mocha
 #theme = Nordfox
 #theme = Everforest Dark Hard
 #theme = Synthwave Alpha
-theme = zenbones-forestbones-dark
+#theme = zenbones-forestbones-dark
 
 macos-icon = "holographic"
 
@@ -23,8 +29,10 @@ keybind = ctrl+l=goto_split:right
 
 # cursor and mouse
 cursor-style = block
+cursor-style-blink = false
 cursor-color = #ffffff
 mouse-hide-while-typing = true
+shell-integration-features = no-cursor
 
 copy-on-select = true
 keybind = shift+enter=text:\n
@@ -33,3 +41,5 @@ keybind = shift+enter=text:\n
 window-inherit-working-directory = true
 
 font-family = JetBrainsMono Nerd Font Mono
+font-thicken = true
+adjust-cell-height = 25%
