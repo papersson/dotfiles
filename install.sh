@@ -41,6 +41,8 @@ backup_and_link "$DOTFILES/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
 # Git
 info "Setting up Git..."
 backup_and_link "$DOTFILES/git/.gitconfig" "$HOME/.gitconfig"
+mkdir -p "$HOME/.config/git"
+backup_and_link "$DOTFILES/git/ignore" "$HOME/.config/git/ignore"
 
 # Create .config if needed
 mkdir -p "$HOME/.config"
@@ -63,6 +65,11 @@ backup_and_link "$DOTFILES/config/ghostty/themes" "$HOME/.config/ghostty/themes"
 # Helix
 info "Setting up Helix..."
 backup_and_link "$DOTFILES/config/helix" "$HOME/.config/helix"
+
+# Atuin
+info "Setting up Atuin..."
+mkdir -p "$HOME/.config/atuin"
+backup_and_link "$DOTFILES/config/atuin/config.toml" "$HOME/.config/atuin/config.toml"
 
 # Claude Code
 info "Setting up Claude Code..."

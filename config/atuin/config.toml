@@ -1,0 +1,28 @@
+# Fuzzy search by default, prefix with ^ for exact match
+search_mode = "fuzzy"
+
+# Start in directory filter mode (most useful for project work)
+filter_mode = "directory"
+
+# Global when using shell up-arrow (your existing prefix search feel)
+filter_mode_shell_up_key_binding = "global"
+
+# Vi-style keymap
+keymap_mode = "vim-insert"
+keymap_cursor = { vim_insert = "blink-bar", vim_normal = "steady-block" }
+
+# Compact UI
+style = "compact"
+inline_height = 40
+
+# Execute immediately on Enter (Tab to edit first)
+enter_accept = true
+
+# Don't store secrets (AWS keys, tokens, etc.)
+secrets_filter = true
+
+# Useful filters
+history_filter = [
+  "^export .*=",      # Don't store export commands with values
+  "^source ",         # Don't store source commands
+]

@@ -129,15 +129,24 @@ alias mv='mv -i'
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# Google Cloud SDK
-source "/opt/homebrew/share/google-cloud-sdk/path.zsh.inc"
-source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+# Google Cloud SDK (lazy-loaded for faster shell startup)
+__load_gcloud() {
+    unfunction gcloud gsutil bq 2>/dev/null
+    source "/opt/homebrew/share/google-cloud-sdk/path.zsh.inc"
+    source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+}
+gcloud() { __load_gcloud && gcloud "$@" }
+gsutil() { __load_gcloud && gsutil "$@" }
+bq() { __load_gcloud && bq "$@" }
 
 # Bun completions
 [ -s "/Users/patrikpersson/.bun/_bun" ] && source "/Users/patrikpersson/.bun/_bun"
 
 # Carapace
 source <(carapace _carapace)
+
+# Atuin - magical shell history (Ctrl+R to search, Up for filtered history)
+eval "$(atuin init zsh --disable-up-arrow)"
 
 # fzf - fuzzy finder (Ctrl-r: history, Ctrl-t: files, Alt-c: cd)
 if [[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ]]; then
