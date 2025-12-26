@@ -1,6 +1,5 @@
-# macOS 26 native glass blur (requires tip build)
-background-blur = macos-glass-regular
-background-opacity = 0.85
+# Background
+background-opacity = 1
 
 # Window styling
 macos-titlebar-style = transparent
