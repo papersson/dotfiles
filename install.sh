@@ -76,6 +76,7 @@ info "Setting up Claude Code..."
 mkdir -p "$HOME/.claude"
 backup_and_link "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 backup_and_link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+backup_and_link "$DOTFILES/claude/statusline.sh" "$HOME/.claude/statusline.sh"
 
 # Readline / libedit
 info "Setting up Readline..."
