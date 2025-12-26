@@ -6,7 +6,7 @@ background-opacity = 0.85
 macos-titlebar-style = transparent
 macos-window-shadow = false
 window-padding-balance = true
-unfocused-split-opacity = 0.85
+#unfocused-split-opacity = 0.85
 
 #theme = Catppuccin Frappe
 theme = Catppuccin Mocha
