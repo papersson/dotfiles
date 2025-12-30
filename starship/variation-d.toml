@@ -1,0 +1,50 @@
+# Variation D: Ultra-minimal (dot for dirty)
+# Preview: ~/dotfiles  main●
+#          ❯
+
+format = """
+$directory$git_branch$git_status
+$character"""
+
+add_newline = false
+
+[directory]
+format = "[$path]($style) "
+style = "bold #cdd6f4"  # Catppuccin text
+truncation_length = 4
+truncate_to_repo = false
+
+[git_branch]
+format = "[ $branch]($style)"
+style = "#a6adc8"  # Catppuccin subtext
+symbol = ""
+
+[git_status]
+format = "[$ahead_behind]($style)[($modified$staged$untracked)]($style2)"
+style = "#6c7086"
+style2 = "#f38ba8"  # Red dot for dirty
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕"
+modified = "●"
+staged = "●"
+untracked = "●"
+deleted = "●"
+stashed = ""
+
+[character]
+success_symbol = "[❯](bold #a6e3a1)"
+error_symbol = "[❯](bold #f38ba8)"
+
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[cmd_duration]
+disabled = true

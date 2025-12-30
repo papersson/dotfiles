@@ -1,0 +1,46 @@
+# Variation B: Single-line compact
+# Preview: ~/dotfiles  main ↑4* ❯
+
+format = "$directory$git_branch$git_status$character"
+
+add_newline = false
+
+[directory]
+format = "[$path]($style) "
+style = "bold #94e2d5"  # Catppuccin teal
+truncation_length = 4
+truncate_to_repo = false
+
+[git_branch]
+format = "[ $branch]($style)"
+style = "#cba6f7"  # Catppuccin mauve
+symbol = ""
+
+[git_status]
+format = "[$ahead_behind$all_status]($style) "
+style = "#f9e2af"  # Catppuccin yellow
+ahead = "↑${count}"
+behind = "↓${count}"
+diverged = "↑${ahead_count}↓${behind_count}"
+stashed = "≡"
+modified = "*"
+staged = "+"
+untracked = "?"
+deleted = "-"
+
+[character]
+success_symbol = "[❯](bold #a6e3a1)"
+error_symbol = "[❯](bold #f38ba8)"
+
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[cmd_duration]
+disabled = true
