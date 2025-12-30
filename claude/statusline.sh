@@ -51,34 +51,16 @@ if [ -n "$session_cost_raw" ] && [ "$session_cost_raw" != "null" ]; then
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Context Progress Bar (gradient block style)
+# Context Progress Bar
 # ─────────────────────────────────────────────────────────────────────────────
 bar_width=20
 filled=$((context_percent * bar_width / 100))
 empty=$((bar_width - filled))
 
-# Build gradient bar using block characters
-bar=""
-for ((i=0; i<filled; i++)); do
-    # Gradient from green → yellow → red based on position
-    pos=$((i * 100 / bar_width))
-    if [ "$pos" -lt 50 ]; then
-        # Green to yellow gradient
-        r=$((166 + (249 - 166) * pos / 50))
-        g=$((227 + (226 - 227) * pos / 50))
-        b=$((161 + (175 - 161) * pos / 50))
-    else
-        # Yellow to red gradient
-        adj=$((pos - 50))
-        r=$((249 + (243 - 249) * adj / 50))
-        g=$((226 + (139 - 226) * adj / 50))
-        b=$((175 + (168 - 175) * adj / 50))
-    fi
-    bar+=$(printf '\033[38;2;%d;%d;%dm█' "$r" "$g" "$b")
-done
+# Build bar (muted subtext color)
+bar="${FG_SUBTEXT}"
+for ((i=0; i<filled; i++)); do bar+="█"; done
 bar+="${NC}"
-
-# Empty part in dim color
 for ((i=0; i<empty; i++)); do bar+="${FG_SURFACE}░${NC}"; done
 
 # ─────────────────────────────────────────────────────────────────────────────
