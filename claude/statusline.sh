@@ -84,6 +84,8 @@ for ((i=0; i<empty; i++)); do bar+="${FG_SURFACE}░${NC}"; done
 # ─────────────────────────────────────────────────────────────────────────────
 # Git Branch
 # ─────────────────────────────────────────────────────────────────────────────
+ICON_GIT=$'\xee\x82\xa0'  # Nerd Font git branch icon (U+E0A0)
+
 cd "$current_dir" 2>/dev/null || cd /
 
 branch=""
@@ -100,7 +102,7 @@ fi
 display_dir="${current_dir/#$HOME/~}"
 line1="${FG_CLAUDE}${model_name}${NC} ${FG_OVERLAY}in${NC} ${FG_TEXT}${display_dir}${NC}"
 if [ -n "$branch" ]; then
-    line1="${line1} ${FG_OVERLAY}on${NC} ${FG_SUBTEXT}${branch}${NC}"
+    line1="${line1} ${FG_OVERLAY}on${NC} ${FG_SUBTEXT}${ICON_GIT} ${branch}${NC}"
 fi
 echo -e "$line1"
 
