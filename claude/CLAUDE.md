@@ -65,6 +65,16 @@ Your context window is finite and quality degrades well before the hard limit. E
 
 **When Bash is acceptable:** Complex shell scripts, tools that require POSIX, or when Nushell syntax is unclear.
 
+**Leverage CLI structured output:** Many modern CLIs support `--json`. Pipe to Nu instead of jq:
+```nu
+gh api user | from json | select login name          # GitHub CLI
+gh pr list --json number,title,state | from json     # PR list
+kubectl get pods -o json | from json | get items     # Kubernetes
+docker ps --format '{{json .}}' | lines | each { from json }
+```
+
+Key tools with JSON output: `gh`, `kubectl`, `docker`, `aws`, `gcloud`, `npm`, `cargo --message-format=json`, `brew --json=v2`
+
 ## Generic Coding Tasks
 
 ### Code Search Hierarchy
