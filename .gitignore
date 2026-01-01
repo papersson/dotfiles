@@ -14,3 +14,4 @@ config/nvim/.claude/
 # Cache and generated files
 *.zwc
 .zcompdump*
+.claude/settings.local.json

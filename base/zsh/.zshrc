@@ -117,7 +117,7 @@ alias mv='mv -i'
 # Tool Integrations
 # ------------------------------------------------------------------------------
 # Starship prompt
-export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
+export STARSHIP_CONFIG="$HOME/dotfiles/base/starship/starship.toml"
 eval "$(starship init zsh)"
 
 # Zoxide

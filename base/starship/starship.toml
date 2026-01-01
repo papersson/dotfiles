@@ -38,6 +38,8 @@ staged = "[+${count}](#a6e3a1)"
 untracked = "[?${count}](#6c7086)"
 deleted = "[-${count}](#f38ba8)"
 stashed = "[≡${count}](#cba6f7)"
+renamed = ""  # Hide renamed indicator (already counted in staged)
+conflicted = "[!${count}](#f38ba8)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Prompt Character

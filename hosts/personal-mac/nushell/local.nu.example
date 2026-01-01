@@ -1,0 +1,19 @@
+# local.nu.example - Machine-specific configuration template
+# Copy this to ~/.config/nushell/autoload/local.nu and customize
+# Files in ~/.config/nushell/autoload/ are automatically sourced by Nushell
+
+# API Keys and secrets
+# $env.OPENAI_API_KEY = "sk-..."
+# $env.ANTHROPIC_API_KEY = "sk-ant-..."
+# $env.GITHUB_TOKEN = "ghp_..."
+
+# Work-specific settings
+# $env.WORK_EMAIL = "you@company.com"
+# $env.WORK_PROJECT_DIR = ($env.HOME | path join "work/projects")
+
+# Machine-specific PATH additions
+# $env.PATH = ($env.PATH | prepend "/custom/path")
+
+# Local aliases or overrides
+# alias k = kubectl
+# alias dc = docker-compose
