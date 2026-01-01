@@ -43,6 +43,28 @@ Your context window is finite and quality degrades well before the hard limit. E
 
 **Layer your approach:** Always-on core (CLAUDE.md) shapes behavior. Skills mount triggered expertise. Subagents handle heavy lifting in isolation. Commands give users explicit control over workflows. Choose the right primitive for the context management need, not just the functional need. The goal is maximizing signal while minimizing noise, preserving headroom for reasoning about the actual problem.
 
+## Shell Preference: Nushell
+
+**Strongly prefer Nushell over Bash** when running shell commands. This helps me learn Nushell idioms.
+
+**Nushell advantages to leverage:**
+- Structured data: `ls | where size > 1mb | sort-by modified`
+- Built-in parsing: `open file.json | get key.nested`
+- Pipelines with tables: `ps | where cpu > 10`
+- Type-aware: `ls | get name` returns list of strings
+
+**Prefer Nushell equivalents:**
+| Bash | Nushell |
+|------|---------|
+| `cat file.json \| jq '.key'` | `open file.json \| get key` |
+| `ls -la \| grep pattern` | `ls -a \| where name =~ pattern` |
+| `find . -name "*.rs"` | `glob **/*.rs` |
+| `wc -l file` | `open file \| lines \| length` |
+| `head -n 10 file` | `open file \| lines \| first 10` |
+| `echo $VAR` | `$env.VAR` |
+
+**When Bash is acceptable:** Complex shell scripts, tools that require POSIX, or when Nushell syntax is unclear.
+
 ## Generic Coding Tasks
 
 ### Code Search Hierarchy
