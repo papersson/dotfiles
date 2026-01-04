@@ -88,6 +88,14 @@ def --env ".." [] { cd .. }
 def --env "..." [] { cd ../.. }
 def --env "...." [] { cd ../../.. }
 
+# Capture workflow friction - review with: open ~/friction.md
+def grr [...message: string] {
+    let msg = ($message | str join " ")
+    let line = $"(date now | format date '%Y-%m-%d') ($msg)"
+    $line ++ "\n" | save --append ~/friction.md
+    print $"(ansi grey)noted(ansi reset)"
+}
+
 # Prompt indicators for vi-mode (shown after starship prompt)
 $env.PROMPT_INDICATOR_VI_INSERT = ""
 $env.PROMPT_INDICATOR_VI_NORMAL = ""
