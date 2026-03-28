@@ -10,6 +10,7 @@ path=(
   /opt/homebrew/opt/llvm/bin
   /opt/homebrew/opt/postgresql@17/bin
   $HOME/.local/bin
+  $HOME/.opencode/bin
   $BUN_INSTALL/bin
   $PNPM_HOME
   "$HOME/Library/Application Support/Coursier/bin"

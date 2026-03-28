@@ -13,6 +13,7 @@ $env.PATH = (
     | prepend ($env.HOME | path join "Library/pnpm")
     | prepend ($env.HOME | path join "Library/Application Support/Coursier/bin")
     | prepend ($env.HOME | path join ".cargo/bin")
+    | prepend ($env.HOME | path join ".opencode/bin")
     | uniq
 )
 
