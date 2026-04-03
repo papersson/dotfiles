@@ -35,6 +35,7 @@ shell-integration-features = no-cursor
 
 copy-on-select = true
 keybind = shift+enter=text:\n
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 
 window-inherit-working-directory = true
