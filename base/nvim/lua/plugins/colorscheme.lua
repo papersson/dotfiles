@@ -1,4 +1,8 @@
 return {
+  -- Tell LazyVim to load gruvbox as the default colorscheme
+  { "LazyVim/LazyVim", opts = { colorscheme = "gruvbox" } },
+
+  {
   "ellisonleao/gruvbox.nvim",
   priority = 1000,
   config = function()
@@ -44,7 +48,7 @@ return {
       },
     })
 
-    -- Apply the Gruvbox colorscheme
-    vim.cmd([[colorscheme gruvbox]])
+    -- LazyVim handles `:colorscheme gruvbox` via opts.colorscheme above
   end,
+  },
 }

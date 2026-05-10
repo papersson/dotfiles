@@ -14,14 +14,21 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("plugins", {
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+require("lazy").setup({
+  spec = {
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    { import = "plugins" },
+  },
   defaults = {
     lazy = false,
     version = false,
   },
-  install = { colorscheme = { "gruvbox" } },
+  install = { colorscheme = { "gruvbox", "habamax" } },
   checker = {
-    enabled = false, -- disable auto-updates for stability
+    enabled = false,
   },
   performance = {
     rtp = {
