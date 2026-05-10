@@ -7,6 +7,7 @@ export PNPM_HOME="/Users/patrikpersson/Library/pnpm"
 export BUN_INSTALL="$HOME/.bun"
 
 path=(
+  /usr/local/bin
   /opt/homebrew/opt/llvm/bin
   /opt/homebrew/opt/postgresql@17/bin
   $HOME/.local/bin

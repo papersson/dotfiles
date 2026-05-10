@@ -4,6 +4,7 @@
 $env.PATH = (
     $env.PATH
     | split row (char esep)
+    | prepend "/usr/local/bin"
     | prepend "/opt/homebrew/bin"
     | prepend "/opt/homebrew/sbin"
     | prepend "/opt/homebrew/opt/llvm/bin"
