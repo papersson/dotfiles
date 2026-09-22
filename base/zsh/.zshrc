@@ -111,9 +111,13 @@ alias g='git'
 alias zshrc='$EDITOR ~/.zshrc'
 alias reload='source ~/.zshrc'
 
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+# Interactive safety prompts for humans only: agent shells (CLAUDECODE=1) have
+# no TTY, so -i silently answers "no" and deletes/overwrites never happen.
+if [[ -z "$CLAUDECODE" ]]; then
+  alias rm='rm -i'
+  alias cp='cp -i'
+  alias mv='mv -i'
+fi
 
 # ------------------------------------------------------------------------------
 # Tool Integrations

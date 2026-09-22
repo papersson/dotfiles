@@ -1,4 +1,5 @@
 # CLAUDE.md - Core Universal Context
+- Use `agent-browser --help` to verify any visual work you are doing.
 
 ## General Agentic Patterns
 
@@ -9,39 +10,12 @@
 - Start broad, then narrow: `rg "pattern"` → `rg -A5 -B5 "pattern"` → read full files
 - Use iterative refinement: each search informs the next query
 - Combine multiple search tools: filesystem structure (`find`), content (`rg`), code structure (`ast-grep`)
-- If a file is suspected relevant, **ALWAYS read it in full** before proceeding
-
-#### Search Sub-Agent Pattern
-**When to use:** 
-- Multiple related files need examination (>5 files)
-- Complex dependency tracing required
-- Initial search scope is unclear
-- Need to understand system architecture
-
-**How it works:**
-```
-Main Agent: "I need to understand how authentication works in this codebase"
-→ Spawn Search Agent with fresh context
-→ Search Agent: Performs 10+ searches, reads files, builds mental model
-→ Returns: Structured summary with key files, patterns, and insights
-Main Agent: Continues with clean context + distilled knowledge
-```
+- When a file is clearly relevant, read all of it rather than excerpts
+- Delegate broad searches (many files, unclear scope, architecture questions) to a search subagent that returns a structured summary of key files and patterns
 
 ### Context Engineering
 
-Your context window is finite and quality degrades well before the hard limit. Every token loaded displaces something else. At 32k tokens most models drop below 50% of their short-context performance. Longer sequences dilute attention, amplify position biases, and create interference between instructions. Protect your signal-to-token ratio: load exactly what's needed when it's needed.
-
-**Search first, read second.** Never dump files into context speculatively. Use search to identify the right files, then read those files in full. Reading the wrong 10 files is worse than reading the right 3 files. This is why the search strategy above matters—good search means reading the right files, which means using context efficiently.
-
-**Use subagents for messy exploration.** When you need to grep 100 files, trace complex dependencies, or process verbose outputs, spawn a subagent with isolated context. It explores, builds understanding, and returns a clean summary. Your main context stays focused on the actual task. The pattern: process is noisy, result is clean. Use this when exploration generates more intermediate noise than final insight.
-
-**Progressive disclosure for domain expertise.** Skills load metadata first (what/when/inputs), then core instructions, then supporting files only on explicit reference. Don't frontload everything "just in case"—mount expertise when patterns appear, keep it resident across follow-ups, evict when no longer needed. Skills work when expertise should persist across conversational turns and results stay concise.
-
-**Keep always-on context minimal.** This file (CLAUDE.md) and system prompts consume tokens on every invocation. Keep them lean—core principles only, not domain knowledge dumps. A 500-line prompt explaining every detail could instead be 5 skills that load on-demand. Delegate specifics to skills, subagents, and retrieval. Reserve always-on context for universal behavioral principles.
-
-**Work with diffs and summaries when appropriate.** Propose changes as diffs rather than rewriting entire files. Summarize test failures and linter output rather than including raw logs. Compress old conversation turns to preserve decisions while discarding exploration noise. But don't be afraid to read full files when you need to understand them—just make sure you're reading the right files (see search strategy above).
-
-**Layer your approach:** Always-on core (CLAUDE.md) shapes behavior. Skills mount triggered expertise. Subagents handle heavy lifting in isolation. Commands give users explicit control over workflows. Choose the right primitive for the context management need, not just the functional need. The goal is maximizing signal while minimizing noise, preserving headroom for reasoning about the actual problem.
+Load what the task needs, not what might be useful. Search to find the right files, then read those. Delegate noisy exploration (wide greps, dependency traces, verbose output) to a subagent and keep its summary. Prefer diffs to whole-file rewrites, and summarize test and lint output rather than pasting raw logs. Keep this file for universal preferences and put domain knowledge in skills.
 
 ## Shell Preference: Nushell
 
@@ -123,13 +97,6 @@ grep -r "getUserById"
 
 ## Core Principles
 
-### Execution Order
-1. **Understand** - Gather context thoroughly
-2. **Plan** - Decompose into steps  
-3. **Execute** - Start simple, iterate
-4. **Verify** - Establish feedback loops
-5. **Refine** - Improve based on feedback
-
 ### Communication
 - Be direct and concise
 - Lead with most important info
@@ -142,7 +109,7 @@ grep -r "getUserById"
 - **No promotional language**: Avoid "breathtaking", "nestled", "captivates", "rich heritage"
 - **No excessive connectives**: Vary transitions. Not every paragraph needs "Moreover", "Furthermore", "Additionally"
 - **No collaborative servility**: Never write "I hope this helps", "Certainly!", "Let me explain"
-- **No meta-disclaimers**: Never mention being an AI, knowledge cutoffs, or inability to do something
+- **No meta-disclaimers**: Don't mention being an AI or knowledge cutoffs. Do say plainly when something could not be done or verified
 - **Plain formatting**: Use bold/italic sparingly for actual emphasis, not decoration
 
 ### Error Handling
@@ -165,31 +132,11 @@ uv run my-cli --help          # Verify entry point works
 
 Commit `uv.lock` and `.python-version` to git.
 
-**Required Structure:**
-```
-my-project/
-├── pyproject.toml
-├── uv.lock
-└── src/
-    ├── __init__.py          # ← Required (can be empty)
-    └── my_package/
-        ├── __init__.py      # ← Required
-        └── cli/
-            └── main.py
-```
+**Structure:** keep the src layout `uv init --package` generates: `src/my_package/__init__.py`, no `src/__init__.py`, and no `packages = ["src"]` override. Hatch finds `src/my_package` by itself, and `packages = ["src"]` ships a top-level package named `src`, so `my_package` can't be imported and the entry point fails.
 
-**Build Config (pyproject.toml):**
 ```toml
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src"]  # ← Required for src-layout
-
 [project.scripts]
-my-cli = "my_package.cli.main:function"
-#        └─ import path ─┘ └function┘
+my-cli = "my_package.cli.main:function"   # import path : function
 ```
 
 **Avoid:**
@@ -206,8 +153,8 @@ cli = "cli:main"  # ❌ Root scripts don't work after install
 
 | Error | Fix |
 |-------|-----|
-| `Unable to determine files to ship` | Add `packages = ["src"]` to `[tool.hatch.build.targets.wheel]` |
-| `No module named 'my_package'` | Add `__init__.py` to `src/` and `src/my_package/` |
+| `Unable to determine files to ship` | The package dir name must match the project name; otherwise set `packages = ["src/my_package"]` |
+| `No module named 'my_package'` | Check `src/my_package/__init__.py` exists and no `packages = ["src"]` override is set |
 | `command not found` | Check entry point uses `pkg.module:func` format, verify with `--help` |
 
 ## Verification
