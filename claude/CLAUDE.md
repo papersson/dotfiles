@@ -209,3 +209,38 @@ cli = "cli:main"  # ❌ Root scripts don't work after install
 | `Unable to determine files to ship` | Add `packages = ["src"]` to `[tool.hatch.build.targets.wheel]` |
 | `No module named 'my_package'` | Add `__init__.py` to `src/` and `src/my_package/` |
 | `command not found` | Check entry point uses `pkg.module:func` format, verify with `--help` |
+
+## Verification
+
+**Verify before you trust.** For any agentic work, define the check before doing the work: write the prompt, command, or test that would prove the task is done, and treat passing it as the goal. The work is finished when the check passes, not when you stop. Climb the signal hierarchy and use the highest rung with ground truth: a deterministic signal (tests, types, lint, build, a tool you can drive) over a domain verification skill, over an adversarial rubric, over asking a human. Prefer a tool call to an LLM judge whenever ground truth exists. Be honest when something is only softly verifiable, like taste: use a rubric, never fake a green check. A backgrounded agent that hits a decision it cannot make from the brief returns the decision to the human rather than guessing.
+
+## Shared working trees
+
+Multiple agents — and the user — may be working in the same repository at the same time, so the working tree can shift under you mid-task.
+
+- **Commit only what you changed.** Stage by explicit path (`git add path/to/file`); never `git add -A` or `git add .` — that sweeps up another agent's or the user's in-progress work.
+- **Re-check `git status` and `git diff` right before committing** — the tree may differ from when you started.
+- **Don't revert, reformat, or "tidy" changes you didn't make** — assume they're intentional, even if entangled in a file you also touched.
+- **Commit your own work once a logical unit is done** rather than leaving it piled in the working tree for someone else to untangle. Commit, don't push — leave pushing to the user unless a repo's own CLAUDE.md says otherwise.
+
+## CLAUDE.md hierarchy
+
+CLAUDE.md files cascade by filesystem location. `~/.claude/CLAUDE.md` (this file) loads in every session; a project's root `CLAUDE.md` loads when cwd is inside that project; a subdirectory's `CLAUDE.md` loads when cwd is under it. Children **supplement**, not replace, parents — everything compounds into the same context.
+
+Use this deliberately. Place each fact at the **narrowest scope where it's still true**:
+
+- Universal preferences, machine-level workflow → global (this file).
+- Repo layout, repo-wide conventions, repo-specific file locations → project root CLAUDE.md.
+- Subsystem-specific rules (a `secrets/CLAUDE.md` warning about encryption discipline, a `modules/CLAUDE.md` codifying module patterns, a `migrations/CLAUDE.md` for schema-change conventions) → subdirectory CLAUDE.md.
+
+Avoid two failure modes:
+- **Duplication**: a fact in a parent is already loaded; restating it in a child creates drift risk when one copy gets updated and the other doesn't.
+- **Scope bleed**: a fact in a child is *not* loaded outside that subtree — cross-cutting rules placed there go silent the moment you `cd` away.
+
+When introducing a new rule, ask: "from which directory will future-me be working when this rule applies?" That directory's CLAUDE.md is where it goes. If a project grows a subsystem with its own non-obvious conventions, that's a signal to create a CLAUDE.md inside it rather than expand the root file.
+
+## Drafts and ideas
+
+Undecided design notes — ideas being weighed, proposals not yet adopted — live in `~/drafts/`, one file per idea. This is deliberately *outside* the CLAUDE.md scope hierarchy above: that hierarchy is for decided rules that should load as context within a scope, whereas a draft is not-yet-context, and often not yet sure which scope it belongs to. Keeping drafts out of project trees also stops an agent from reading a maybe as guidance.
+
+When a draft is adopted or rejected, fold the outcome into the CLAUDE.md at the right scope and delete the draft. `~/drafts/` holds only live, undecided thinking.
