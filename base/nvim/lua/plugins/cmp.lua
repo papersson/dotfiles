@@ -1,0 +1,49 @@
+-- Completion: nvim-cmp with the same four sources and four mappings as
+-- nvim.nix. No preset, so only the keys listed here are bound.
+return {
+  "hrsh7th/nvim-cmp",
+  event = "InsertEnter",
+  dependencies = {
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+    { "L3MON4D3/LuaSnip", version = "v2.*" },
+    "saadparwaiz1/cmp_luasnip",
+  },
+  config = function()
+    local cmp = require("cmp")
+    local luasnip = require("luasnip")
+
+    cmp.setup({
+      snippet = {
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+        end,
+      },
+      sources = {
+        { name = "nvim_lsp" },
+        { name = "path" },
+        { name = "buffer" },
+        { name = "luasnip" },
+      },
+      mapping = {
+        ["<C-Space>"] = cmp.mapping.complete(),
+        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item()
+          else
+            fallback()
+          end
+        end, { "i", "s" }),
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item()
+          else
+            fallback()
+          end
+        end, { "i", "s" }),
+      },
+    })
+  end,
+}

@@ -1,4 +1,4 @@
--- Core Vim Options
+-- vim.opt.X — mirrors the `opts` block in nvim.nix.
 
 local opt = vim.opt
 
@@ -37,10 +37,4 @@ opt.splitbelow = true
 opt.splitright = true
 
 -- Completion
-opt.completeopt = "menu,menuone,noselect"
-
--- Performance
-opt.lazyredraw = false
-opt.ttyfast = true
-
--- Leader key is set in config/lazy.lua (must run before lazy.setup)
+opt.completeopt = { "menu", "menuone", "noselect" }

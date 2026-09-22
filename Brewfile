@@ -39,6 +39,17 @@ brew "llvm"
 brew "nasm"
 brew "neofetch"
 brew "neovim"
+# Neovim LSP servers + formatters, mirroring nixos-config/home/patrikpersson/nvim.nix.
+# `nil` (Nix LSP) has no formula: `nix profile install nixpkgs#nil`.
+# metals / elixir-ls / ocamllsp are intentionally absent: each project's devShell provides them.
+brew "lua-language-server"
+brew "bash-language-server"
+brew "typescript-language-server"
+brew "pyright"
+brew "zls"
+brew "stylua"
+brew "nixfmt"
+brew "prettier"
 brew "node"
 brew "nushell"
 brew "ollama"

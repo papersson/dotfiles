@@ -1,90 +1,105 @@
--- Core Navigation Keymaps
+-- Mirrors the top-level `keymaps` list in nvim.nix. Plugin-internal maps that
+-- call Lua functions (flash, telescope pickers, LSP) live next to their plugin.
+
+local map = vim.keymap.set
 
 -- Quick escape
-vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
+map("i", "jj", "<Esc>", { noremap = true, silent = true })
 
--- Better window navigation
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
+-- Window navigation
+map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
 
 -- Buffer navigation
-vim.keymap.set("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
-vim.keymap.set("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
-vim.keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "Delete buffer" })
-vim.keymap.set("n", "<leader>bD", "<cmd>bd!<cr>", { desc = "Force delete buffer" })
+map("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
+map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "<leader>bd", "<cmd>bd<cr>", { desc = "Delete buffer" })
+map("n", "<leader>bD", "<cmd>bd!<cr>", { desc = "Force delete buffer" })
 
 -- Quickfix navigation
-vim.keymap.set("n", "[q", "<cmd>cprev<cr>", { desc = "Previous quickfix" })
-vim.keymap.set("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix" })
-vim.keymap.set("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix" })
-vim.keymap.set("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix" })
+map("n", "[q", "<cmd>cprev<cr>", { desc = "Previous quickfix" })
+map("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix" })
+map("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix" })
+map("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix" })
 
 -- Location list navigation
-vim.keymap.set("n", "[l", "<cmd>lprev<cr>", { desc = "Previous location" })
-vim.keymap.set("n", "]l", "<cmd>lnext<cr>", { desc = "Next location" })
-vim.keymap.set("n", "<leader>lo", "<cmd>lopen<cr>", { desc = "Open location list" })
-vim.keymap.set("n", "<leader>lc", "<cmd>lclose<cr>", { desc = "Close location list" })
+map("n", "[l", "<cmd>lprev<cr>", { desc = "Previous location" })
+map("n", "]l", "<cmd>lnext<cr>", { desc = "Next location" })
+map("n", "<leader>lo", "<cmd>lopen<cr>", { desc = "Open location list" })
+map("n", "<leader>lc", "<cmd>lclose<cr>", { desc = "Close location list" })
 
 -- Search and replace
-vim.keymap.set("n", "<leader>rw", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
-vim.keymap.set("v", "<leader>r", [[:s/]], { desc = "Replace in selection" })
+map("n", "<leader>rw", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
+map("v", "<leader>r", [[:s/]], { desc = "Replace in selection" })
 
 -- Keep cursor centered when scrolling
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
-vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result" })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
+map("n", "n", "nzzzv", { desc = "Next search result" })
+map("n", "N", "Nzzzv", { desc = "Previous search result" })
 
--- Better indenting
-vim.keymap.set("v", "<", "<gv", { desc = "Indent left" })
-vim.keymap.set("v", ">", ">gv", { desc = "Indent right" })
+-- Better indenting (stay in visual mode)
+map("v", "<", "<gv", { desc = "Indent left" })
+map("v", ">", ">gv", { desc = "Indent right" })
 
 -- Move lines
-vim.keymap.set("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move line down" })
-vim.keymap.set("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move line up" })
-vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
-vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
+map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move line down" })
+map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move line up" })
+map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
+map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
 
--- Jump list navigation (making them more prominent)
-vim.keymap.set("n", "<leader>jo", "<C-o>", { desc = "Jump back" })
-vim.keymap.set("n", "<leader>ji", "<C-i>", { desc = "Jump forward" })
+-- Jump list
+map("n", "<leader>jo", "<C-o>", { desc = "Jump back" })
+map("n", "<leader>ji", "<C-i>", { desc = "Jump forward" })
 
--- Mark navigation
-vim.keymap.set("n", "<leader>ml", "<cmd>marks<cr>", { desc = "List marks" })
-vim.keymap.set("n", "<leader>md", "<cmd>delmarks a-z<cr>", { desc = "Delete all marks" })
+-- Marks
+map("n", "<leader>ml", "<cmd>marks<cr>", { desc = "List marks" })
+map("n", "<leader>md", "<cmd>delmarks a-z<cr>", { desc = "Delete all marks" })
 
--- Tags navigation (requires ctags)
-vim.keymap.set("n", "<leader>tj", "<C-]>", { desc = "Jump to tag" })
-vim.keymap.set("n", "<leader>tb", "<C-t>", { desc = "Jump back from tag" })
-vim.keymap.set("n", "<leader>ts", "g]", { desc = "List matching tags" })
+-- Markdown preview (glow.nvim renders the buffer in a floating window)
+map("n", "<leader>mp", "<cmd>Glow<cr>", { desc = "Markdown preview (glow)" })
+
+-- Tags (requires ctags)
+map("n", "<leader>tj", "<C-]>", { desc = "Jump to tag" })
+map("n", "<leader>tb", "<C-t>", { desc = "Jump back from tag" })
+map("n", "<leader>ts", "g]", { desc = "List matching tags" })
 
 -- Macro helpers
-vim.keymap.set("n", "Q", "@q", { desc = "Play macro q" })
-vim.keymap.set("v", "Q", ":norm @q<cr>", { desc = "Play macro q on selection" })
+map("n", "Q", "@q", { desc = "Play macro q" })
+map("v", "Q", ":norm @q<cr>", { desc = "Play macro q on selection" })
 
 -- Clear search highlighting
-vim.keymap.set("n", "<leader>h", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
+map("n", "<leader>h", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
--- Yank to system clipboard
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
-vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to clipboard" })
+-- System clipboard
+map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
+map("n", "<leader>Y", [["+Y]], { desc = "Yank line to clipboard" })
+map({ "n", "v" }, "<leader>p", [["+p]], { desc = "Paste from clipboard" })
+map({ "n", "v" }, "<leader>P", [["+P]], { desc = "Paste before from clipboard" })
 
--- Paste from system clipboard
-vim.keymap.set({ "n", "v" }, "<leader>p", [["+p]], { desc = "Paste from clipboard" })
-vim.keymap.set({ "n", "v" }, "<leader>P", [["+P]], { desc = "Paste before from clipboard" })
-
--- Quick save
-vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save file" })
-vim.keymap.set("n", "<leader>W", "<cmd>wa<cr>", { desc = "Save all files" })
-
--- Quick quit
-vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
-vim.keymap.set("n", "<leader>Q", "<cmd>qa<cr>", { desc = "Quit all" })
+-- Save / quit
+map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save file" })
+map("n", "<leader>W", "<cmd>wa<cr>", { desc = "Save all files" })
+map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
+map("n", "<leader>Q", "<cmd>qa<cr>", { desc = "Quit all" })
 
 -- Split management
-vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split vertical" })
-vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split horizontal" })
-vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Equal splits" })
-vim.keymap.set("n", "<leader>sx", "<cmd>close<cr>", { desc = "Close split" })
+map("n", "<leader>sv", "<C-w>v", { desc = "Split vertical" })
+map("n", "<leader>sh", "<C-w>s", { desc = "Split horizontal" })
+map("n", "<leader>se", "<C-w>=", { desc = "Equal splits" })
+map("n", "<leader>sx", "<cmd>close<cr>", { desc = "Close split" })
+
+-- Neo-tree
+map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle Neo-tree" })
+map("n", "<leader>E", "<cmd>Neotree reveal<cr>", { desc = "Reveal file in Neo-tree" })
+map("n", "-", "<cmd>Neotree float<cr>", { desc = "Neo-tree float" })
+
+-- Fugitive
+map("n", "<leader>gg", "<cmd>Git<cr>", { desc = "Git status" })
+map("n", "<leader>gb", "<cmd>Git blame<cr>", { desc = "Git blame" })
+map("n", "<leader>gd", "<cmd>Gdiff<cr>", { desc = "Git diff" })
+map("n", "<leader>gl", "<cmd>Git log<cr>", { desc = "Git log" })
+map("n", "<leader>gp", "<cmd>Git push<cr>", { desc = "Git push" })
+map("n", "<leader>gP", "<cmd>Git pull<cr>", { desc = "Git pull" })

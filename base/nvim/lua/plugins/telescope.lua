@@ -6,45 +6,40 @@ return {
   },
   cmd = "Telescope",
   keys = {
-    -- File navigation
+    -- Files
     { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
     { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
     { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
     { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
     { "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Recent files" },
-    
     -- Search variations
     { "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Grep word under cursor" },
     { "gr", "<cmd>Telescope grep_string<cr>", desc = "Grep references" },
-    
     -- Navigation
     { "<leader>fm", "<cmd>Telescope marks<cr>", desc = "Marks" },
     { "<leader>fj", "<cmd>Telescope jumplist<cr>", desc = "Jump list" },
     { "<leader>fr", "<cmd>Telescope registers<cr>", desc = "Registers" },
-    
     -- Git
     { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
     { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git status" },
-    
-    -- Tags (requires ctags)
+    -- Tags (requires ctags). `gd` is overridden buffer-locally by the LSP
+    -- definition map in LSP-attached buffers; elsewhere tags win.
     { "gd", "<cmd>Telescope tags<cr>", desc = "Go to definition (tags)" },
     { "<leader>ft", "<cmd>Telescope tags<cr>", desc = "Tags" },
     { "<leader>fT", "<cmd>Telescope current_buffer_tags<cr>", desc = "Buffer tags" },
-    
     -- Vim internals
     { "<leader>fc", "<cmd>Telescope commands<cr>", desc = "Commands" },
     { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
     { "<leader>f:", "<cmd>Telescope command_history<cr>", desc = "Command history" },
     { "<leader>f/", "<cmd>Telescope search_history<cr>", desc = "Search history" },
-    
-    -- Quickfix
+    -- Lists
     { "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix list" },
     { "<leader>fl", "<cmd>Telescope loclist<cr>", desc = "Location list" },
   },
   config = function()
     local telescope = require("telescope")
     local actions = require("telescope.actions")
-    
+
     telescope.setup({
       defaults = {
         mappings = {
@@ -77,7 +72,6 @@ return {
         },
         path_display = { "truncate" },
         winblend = 0,
-        border = {},
         borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
         color_devicons = true,
       },
@@ -105,8 +99,7 @@ return {
         },
       },
     })
-    
-    -- Load extensions
+
     telescope.load_extension("fzf")
   end,
 }

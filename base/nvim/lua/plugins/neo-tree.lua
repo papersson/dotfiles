@@ -1,3 +1,4 @@
+-- Keymaps (<leader>e, <leader>E, -) live in config/keymaps.lua.
 return {
   "nvim-neo-tree/neo-tree.nvim",
   branch = "v3.x",
@@ -7,26 +8,18 @@ return {
     "MunifTanjim/nui.nvim",
   },
   cmd = "Neotree",
-  keys = {
-    { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "Toggle Neo-tree" },
-    { "<leader>E", "<cmd>Neotree reveal<cr>", desc = "Reveal file in Neo-tree" },
-    { "-", "<cmd>Neotree float<cr>", desc = "Neo-tree float" },
-  },
   opts = {
     close_if_last_window = true,
     popup_border_style = "rounded",
     enable_git_status = true,
     enable_diagnostics = true,
-
     sources = { "filesystem", "buffers", "git_status" },
 
     filesystem = {
       filtered_items = {
         hide_dotfiles = false,
         hide_gitignored = false,
-        hide_by_name = {
-          "node_modules",
-        },
+        hide_by_name = { "node_modules" },
       },
       follow_current_file = {
         enabled = true,
@@ -44,11 +37,9 @@ return {
         ["l"] = "open",
         ["h"] = "close_node",
         ["<esc>"] = "cancel",
-        ["P"] = { "toggle_preview", config = { use_float = true, use_image_nvim = true } },
         ["S"] = "open_split",
         ["s"] = "open_vsplit",
         ["t"] = "open_tabnew",
-        ["a"] = { "add", config = { show_path = "relative" } },
         ["A"] = "add_directory",
         ["d"] = "delete",
         ["r"] = "rename",
@@ -73,15 +64,15 @@ return {
       },
       git_status = {
         symbols = {
-          added     = "",
-          modified  = "",
-          deleted   = "✖",
-          renamed   = "󰁕",
+          added = "",
+          modified = "",
+          deleted = "✖",
+          renamed = "󰁕",
           untracked = "",
-          ignored   = "",
-          unstaged  = "󰄱",
-          staged    = "",
-          conflict  = "",
+          ignored = "",
+          unstaged = "󰄱",
+          staged = "",
+          conflict = "",
         },
       },
     },

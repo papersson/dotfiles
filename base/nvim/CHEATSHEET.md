@@ -29,7 +29,7 @@ FINDING STUFF
 <leader>ff      Find files
 <leader>fb      Find buffers
 gr              Grep word under cursor
--               Open file explorer (Oil)
+-               Open file explorer (Neo-tree float)
 
 QUICKFIX (After Search)
 Ctrl-q          Send search results to quickfix

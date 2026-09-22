@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# glow.nvim spawns glow on plain pipes (no pty), so glow's colour detection
+# sees "not a terminal" and strips every colour. CLICOLOR_FORCE overrides
+# that. Scoped to this wrapper rather than vim.env so no other subprocess
+# (formatters, linters, git) inherits it.
+CLICOLOR_FORCE=1 exec glow "$@"
