@@ -86,10 +86,29 @@ fi
 USAGE_CACHE="${CLAUDE_USAGE_CACHE:-$HOME/.claude/cache/usage.json}"
 USAGE_TTL=300  # seconds
 
+# Linux keeps the OAuth token in ~/.claude/.credentials.json; macOS keeps it
+# in the login keychain. Try the file first, then the keychain.
+oauth_token() {
+    local creds="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.credentials.json" token=""
+    [ -r "$creds" ] && token=$(jq -r '.claudeAiOauth.accessToken // empty' "$creds" 2>/dev/null)
+    if [ -z "$token" ] && [ "$(uname -s)" = "Darwin" ]; then
+        token=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null \
+            | jq -r '.claudeAiOauth.accessToken // empty')
+    fi
+    printf '%s' "$token"
+}
+
+file_mtime() {  # epoch seconds, BSD or GNU stat
+    stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || echo 0
+}
+
+fmt_epoch() {  # epoch format-string, BSD or GNU date
+    date -r "$1" "$2" 2>/dev/null || date -d "@$1" "$2" 2>/dev/null
+}
+
 refresh_usage_cache() {
     local token
-    token=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null \
-        | jq -r '.claudeAiOauth.accessToken // empty')
+    token=$(oauth_token)
     [ -z "$token" ] && return
     local tmp="${USAGE_CACHE}.tmp.$$"
     if curl -sS -m 10 "https://api.anthropic.com/api/oauth/usage" \
@@ -105,7 +124,7 @@ refresh_usage_cache() {
 
 cache_age=$USAGE_TTL
 if [ -f "$USAGE_CACHE" ]; then
-    cache_age=$(( $(date +%s) - $(stat -f %m "$USAGE_CACHE" 2>/dev/null || echo 0) ))
+    cache_age=$(( $(date +%s) - $(file_mtime "$USAGE_CACHE") ))
 fi
 if [ "$cache_age" -ge "$USAGE_TTL" ] && [ -z "$STATUSLINE_NO_FETCH" ]; then
     touch "$USAGE_CACHE" 2>/dev/null   # debounce: only one refresh per TTL
@@ -138,10 +157,10 @@ pct_color() {  # green < 50, yellow < 80, red otherwise
 fmt_reset() {  # epoch -> "16:00" if today, else "tue 13:00"
     [ -z "$1" ] && return
     local ts=${1%.*}
-    if [ "$(date -r "$ts" +%Y-%m-%d)" = "$(date +%Y-%m-%d)" ]; then
-        date -r "$ts" +%H:%M
+    if [ "$(fmt_epoch "$ts" +%Y-%m-%d)" = "$(date +%Y-%m-%d)" ]; then
+        fmt_epoch "$ts" +%H:%M
     else
-        date -r "$ts" '+%a %H:%M' | tr '[:upper:]' '[:lower:]'
+        fmt_epoch "$ts" '+%a %H:%M' | tr '[:upper:]' '[:lower:]'
     fi
 }
 
