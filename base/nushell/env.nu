@@ -15,6 +15,9 @@ $env.PATH = (
     | prepend ($env.HOME | path join "Library/Application Support/Coursier/bin")
     | prepend ($env.HOME | path join ".cargo/bin")
     | prepend ($env.HOME | path join ".opencode/bin")
+    | prepend ($env.HOME | path join ".bend/bin")
+    | prepend "/nix/var/nix/profiles/default/bin"
+    | prepend ($env.HOME | path join ".nix-profile/bin")
     | uniq
 )
 
