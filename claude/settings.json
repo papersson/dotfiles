@@ -3,6 +3,7 @@
   "cleanupPeriodDays": 36500,
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "90",
     "STUDIO_HOME": "/Users/patrikpersson/Code/active/tutor/studio"
   },
   "includeCoAuthoredBy": false,
@@ -153,7 +154,7 @@
   "theme": "dark",
   "editorMode": "vim",
   "preferredNotifChannel": "terminal_bell",
-  "autoCompactEnabled": false,
+  "autoCompactEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
