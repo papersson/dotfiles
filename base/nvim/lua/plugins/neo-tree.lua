@@ -7,7 +7,9 @@ return {
     "nvim-tree/nvim-web-devicons",
     "MunifTanjim/nui.nvim",
   },
-  cmd = "Neotree",
+  -- Loaded at startup, as nixvim does, so `nvim <dir>` opens the tree.
+  -- netrw is disabled in config/lazy.lua, so nothing else would handle it.
+  lazy = false,
   opts = {
     close_if_last_window = true,
     popup_border_style = "rounded",

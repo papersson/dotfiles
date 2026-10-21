@@ -29,7 +29,7 @@ Nothing is downloaded by the editor. Everything resolves from PATH:
 
 - Homebrew (see `Brewfile`): neovim, ripgrep, glow, lua-language-server,
   bash-language-server, typescript-language-server, pyright, zls, stylua,
-  nixfmt, prettier, ruff.
+  nixfmt, prettier, ruff, universal-ctags.
 - Nix profile: `nil` (`nix profile install nixpkgs#nil`).
 - rustup: rust-analyzer, rustfmt.
 - Project devShell (direnv): metals, elixir-ls, ocamllsp, mix. Not installed
