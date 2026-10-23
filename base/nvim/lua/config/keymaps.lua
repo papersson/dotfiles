@@ -61,11 +61,6 @@ map("n", "<leader>md", "<cmd>delmarks a-z<cr>", { desc = "Delete all marks" })
 -- Markdown preview (glow.nvim renders the buffer in a floating window)
 map("n", "<leader>mp", "<cmd>Glow<cr>", { desc = "Markdown preview (glow)" })
 
--- Tags (requires ctags)
-map("n", "<leader>tj", "<C-]>", { desc = "Jump to tag" })
-map("n", "<leader>tb", "<C-t>", { desc = "Jump back from tag" })
-map("n", "<leader>ts", "g]", { desc = "List matching tags" })
-
 -- Macro helpers
 map("n", "Q", "@q", { desc = "Play macro q" })
 map("v", "Q", ":norm @q<cr>", { desc = "Play macro q on selection" })

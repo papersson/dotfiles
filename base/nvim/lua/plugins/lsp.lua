@@ -37,8 +37,7 @@ return {
     })
 
     -- Buffer-local maps on attach, same set as `plugins.lsp.keymaps` in
-    -- nvim.nix. Buffer-local so the LSP `gd` overrides telescope's global
-    -- tags `gd` only where a server is attached.
+    -- nvim.nix.
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(ev)
         local function map(lhs, rhs, desc)

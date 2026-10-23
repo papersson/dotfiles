@@ -8,7 +8,7 @@ JUMPING
 Ctrl-O          Jump back (previous location)
 Ctrl-I          Jump forward (next location)
 ''              Jump to last position
-gd              Go to definition (local/tags)
+gd              Go to definition (LSP, else local)
 gf              Go to file under cursor
 *               Search word forward
 #               Search word backward

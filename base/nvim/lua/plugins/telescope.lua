@@ -22,11 +22,6 @@ return {
     -- Git
     { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
     { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git status" },
-    -- Tags (requires ctags). `gd` is overridden buffer-locally by the LSP
-    -- definition map in LSP-attached buffers; elsewhere tags win.
-    { "gd", "<cmd>Telescope tags<cr>", desc = "Go to definition (tags)" },
-    { "<leader>ft", "<cmd>Telescope tags<cr>", desc = "Tags" },
-    { "<leader>fT", "<cmd>Telescope current_buffer_tags<cr>", desc = "Buffer tags" },
     -- Vim internals
     { "<leader>fc", "<cmd>Telescope commands<cr>", desc = "Commands" },
     { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
