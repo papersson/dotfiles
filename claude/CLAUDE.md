@@ -170,6 +170,10 @@ Multiple agents — and the user — may be working in the same repository at th
 - **Don't revert, reformat, or "tidy" changes you didn't make** — assume they're intentional, even if entangled in a file you also touched.
 - **Commit your own work once a logical unit is done** rather than leaving it piled in the working tree for someone else to untangle. Commit, don't push — leave pushing to the user unless a repo's own CLAUDE.md says otherwise.
 
+## Large media
+
+Video, frame sequences, renders, datasets and other bulk files live on z840 (`/tank/archive`); this Mac is a working cache with a nearly full disk. When no one is working on such a folder, move it with `media archive <dir>`, which verifies every file on the server before it replaces the folder with a `MEDIA-ARCHIVED.md` stub. A folder holding that stub is archived: bring it back with `media fetch <dir>` instead of regenerating it. Never delete media any other way, and never write image data into logs; store the path or a hash.
+
 ## CLAUDE.md hierarchy
 
 CLAUDE.md files cascade by filesystem location. `~/.claude/CLAUDE.md` (this file) loads in every session; a project's root `CLAUDE.md` loads when cwd is inside that project; a subdirectory's `CLAUDE.md` loads when cwd is under it. Children **supplement**, not replace, parents — everything compounds into the same context.
