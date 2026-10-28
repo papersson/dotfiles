@@ -1,0 +1,341 @@
+#!/usr/bin/env -S nu --no-config-file
+# media: keep big project media on z840 and use the laptop as a working cache.
+#
+# `archive` copies a folder to the same path under $MEDIA_ROOT on $MEDIA_HOST
+# (~/Code/x/data -> /tank/archive/Code/x/data), checks every file's SHA-256 on
+# the server, and only then replaces the local folder with a MEDIA-ARCHIVED.md
+# stub saying where the files went. `fetch` brings them back and checks them
+# again. `status` and `hook` read a scan cache, so they never walk the disk.
+
+const STUB = "MEDIA-ARCHIVED.md"
+const MANIFEST = ".media-manifest.sha256"
+const CHUNK = 500
+
+def media-host [] { $env.MEDIA_HOST? | default "server" }
+def media-root [] { $env.MEDIA_ROOT? | default "/tank/archive" }
+def state-dir [] { $env.MEDIA_STATE? | default ($env.HOME | path join ".local/state/media") }
+
+# Quote a string for the POSIX shell on the far side of ssh.
+def sq [s: string] { $"'($s | str replace --all "'" "'\\''")'" }
+
+def fail [msg: string] { error make --unspanned {msg: $msg} }
+
+def step [msg: string] { print $"  ($msg)" }
+
+def ssh-run [cmd: string, --stdin: string] {
+    let args = [-o BatchMode=yes -o ConnectTimeout=10 (media-host) $cmd]
+    if $stdin == null { ^ssh ...$args | complete } else { $stdin | ^ssh ...$args | complete }
+}
+
+# Run a POSIX sh script on the server with positional arguments.
+def remote-sh [script: string, ...args: string] {
+    ssh-run --stdin $script $"sh -s -- ($args | each {|a| sq $a } | str join ' ')"
+}
+
+def hash-cmd [] { if $nu.os-info.name == "macos" { [shasum -a 256] } else { [sha256sum] } }
+def stat-cmd [] { if $nu.os-info.name == "macos" { [stat -f "%z %m %N"] } else { [stat -c "%s %Y %n"] } }
+
+def local-free [] {
+    (^df -k $env.HOME | lines | last | split row --regex '\s+' | get 3 | into int) * 1024
+}
+
+def resolve [dir: string] {
+    let abs = ($dir | path expand --no-symlink)
+    if not ($abs | str starts-with $"($env.HOME)/") { fail $"($abs) is not under ($env.HOME)" }
+    let rel = ($abs | path relative-to $env.HOME)
+    {abs: $abs, rel: $rel, remote: ([(media-root) $rel] | path join)}
+}
+
+def read-stub [path: string] {
+    open --raw $path | lines | skip 1 | take until {|l| $l == "---" } | str join "\n" | from yaml
+}
+
+def log-event [rec: record] {
+    mkdir (state-dir)
+    $"($rec | to json --raw)\n" | save --append (state-dir | path join "log.jsonl")
+}
+
+# Regular files under the current directory, minus the tool's own files.
+def list-files [] {
+    let found = (^find . -type f ! -name $MANIFEST ! -name $STUB -print0 | complete)
+    if $found.exit_code != 0 { fail $"find failed: ($found.stderr)" }
+    let files = ($found.stdout | split row (char nul) | where $it != "")
+    if ($files | any {|f| $f =~ "\n" }) { fail "a file name contains a newline; rename it first" }
+    $files
+}
+
+# "size mtime path" per file, sorted. Taken before copying and again before
+# deleting, so a file that changed in between stops the delete.
+def snapshot [files: list<string>] {
+    let cmd = (stat-cmd)
+    $files | chunks $CHUNK | par-each {|c| run-external $cmd.0 ...($cmd | skip 1) ...$c | lines } | flatten | sort
+}
+
+def hash-files [files: list<string>] {
+    let cmd = (hash-cmd)
+    $files | chunks $CHUNK | par-each {|c| run-external $cmd.0 ...($cmd | skip 1) ...$c | lines } | flatten | sort
+}
+
+const VERIFY_SH = r#'
+set -eu
+cd "$1"
+n=$(wc -l < .media-manifest.sha256)
+[ "$n" -gt 0 ] || { echo "empty manifest"; exit 1; }
+t=$(mktemp -d)
+trap 'rm -rf "$t"' EXIT
+split -l $(( (n + 7) / 8 )) .media-manifest.sha256 "$t/p."
+ls "$t"/p.* | xargs -P 8 -I{} sha256sum --quiet --strict -c {}
+'#
+
+const PREFLIGHT_SH = '
+root="$1"; dir="$2"
+[ -d "$root" ] && [ -w "$root" ] || { echo "NOROOT"; exit 0; }
+echo "AVAIL $(df -B1 --output=avail "$root" | tail -1 | tr -d " ")"
+if [ ! -e "$dir" ]; then echo NEW
+elif [ -f "$dir/.media-manifest.sha256" ]; then echo PRIOR
+else echo FOREIGN; fi
+'
+
+def verify-remote [remote_dir: string] {
+    let r = (remote-sh $VERIFY_SH $remote_dir)
+    if $r.exit_code != 0 {
+        let bad = ($r.stdout + $r.stderr | lines | where $it != "" | first 5 | str join "\n    ")
+        fail $"checksums did not match on (media-host):($remote_dir)\n    ($bad)"
+    }
+}
+
+def archive-one [dir: string, dry_run: bool] {
+    let d = (resolve $dir)
+    if ($d.abs | path type) != "dir" { fail $"($d.abs) is not a directory" }
+    if ($d.abs | path join $STUB | path exists) { fail $"($d.abs) is already archived" }
+    # Archiving tracked files would show up as deletions in a shared working tree.
+    let tracked = (^git -C $d.abs ls-files | complete)
+    if $tracked.exit_code == 0 and ($tracked.stdout | str trim) != "" {
+        fail $"($d.abs) contains git-tracked files; archive only untracked data"
+    }
+
+    print $"archive ($d.abs) -> (media-host):($d.remote)"
+    cd $d.abs
+    let files = (list-files)
+    if ($files | is-empty) { fail $"($d.abs) has no files" }
+    let before = (snapshot $files)
+    let bytes = ($before | each {|l| $l | split row " " | first | into int } | math sum)
+    step $"($files | length) files, ($bytes | into filesize)"
+
+    let pre = (remote-sh $PREFLIGHT_SH (media-root) $d.remote)
+    if $pre.exit_code != 0 { fail $"cannot reach (media-host): ($pre.stderr | str trim)" }
+    let pre_lines = ($pre.stdout | lines)
+    if ($pre_lines | first) == "NOROOT" { fail $"(media-root) is missing or not writable on (media-host)" }
+    let avail = ($pre_lines | first | split row " " | last | into int)
+    let state = ($pre_lines | last)
+    if $state == "FOREIGN" { fail $"(media-host):($d.remote) exists but was not made by media; refusing to merge" }
+    if $bytes > $avail { fail $"(media-host) has only ($avail | into filesize) free" }
+    step $"server copy: ($state | str downcase), ($avail | into filesize) free there"
+    if $dry_run { step "dry run: nothing copied or deleted"; return }
+
+    step "hashing"
+    hash-files $files | str join "\n" | $in + "\n" | save -f $MANIFEST
+
+    step "copying"
+    let mk = (ssh-run $"mkdir -p (sq $d.remote)")
+    if $mk.exit_code != 0 { fail $"mkdir on (media-host) failed: ($mk.stderr | str trim)" }
+    let rs = (^rsync -a --partial $"($d.abs)/" $"(media-host):(sq $d.remote)/" | complete)
+    if $rs.exit_code != 0 { fail $"rsync failed \(rerun to resume\): ($rs.stderr | str trim)" }
+
+    step "verifying on the server"
+    verify-remote $d.remote
+    if (snapshot (list-files)) != $before {
+        fail $"files in ($d.abs) changed during the archive; nothing deleted, rerun when they are stable"
+    }
+
+    # Swap in the stub before the slow delete, so an interrupted delete still
+    # leaves a folder that says where its files are.
+    let doomed = $"($d.abs).media-deleting"
+    cd $env.HOME
+    mv $d.abs $doomed
+    mkdir $d.abs
+    let now = (date now | format date "%Y-%m-%dT%H:%M:%S%:z")
+    let size = ($bytes | into filesize)
+    let count = ($files | length)
+    $"---
+media: archived
+host: (media-host)
+remote: ($d.remote)
+archived: ($now)
+files: ($count)
+bytes: ($bytes)
+---
+
+# Archived to (media-host)
+
+The files in this folder were moved to the home server to free disk space.
+Every file's SHA-256 matched on the server before the local copy was deleted.
+
+- Where: `(media-host):($d.remote)`
+- When: ($now | str substring 0..15 | str replace 'T' ' ')
+- Size: ($size) in ($count) files
+
+To bring them back:
+
+    media fetch ~/($d.rel)
+
+The server keeps hourly, daily, weekly and monthly ZFS snapshots of (media-root).
+" | save $"($d.abs)/($STUB)"
+    ^rm -rf $doomed
+    log-event {time: $now, action: archive, path: $d.rel, host: (media-host), remote: $d.remote, files: $count, bytes: $bytes}
+    step $"done: freed ($size); stub at ~/($d.rel)/($STUB)"
+}
+
+def fetch-one [dir: string] {
+    let d = (resolve $dir)
+    let stub = ($d.abs | path join $STUB)
+    if ($d.abs | path exists) {
+        let extra = (ls -a $d.abs | where {|f| ($f.name | path basename) != $STUB })
+        if not ($extra | is-empty) { fail $"($d.abs) already has files; move them aside before fetching" }
+    }
+    let bytes = if ($stub | path exists) { read-stub $stub | get bytes } else {
+        let r = (ssh-run $"du -sb (sq $d.remote) | cut -f1")
+        if $r.exit_code != 0 { fail $"nothing archived at (media-host):($d.remote)" }
+        $r.stdout | str trim | into int
+    }
+    # macOS degrades when nearly full, so a fetch must leave this much free.
+    let keep = ($env.MEDIA_MIN_FREE? | default "5GiB" | into filesize | into int)
+    let free = (local-free)
+    if $bytes + $keep > $free {
+        fail $"need ($bytes | into filesize) and to keep ($keep | into filesize) free, but only ($free | into filesize) is free here"
+    }
+
+    print $"fetch (media-host):($d.remote) -> ($d.abs)"
+    step $"copying ($bytes | into filesize)"
+    mkdir $d.abs
+    let rs = (^rsync -a --partial $"(media-host):(sq $d.remote)/" $"($d.abs)/" | complete)
+    if $rs.exit_code != 0 { fail $"rsync failed \(rerun to resume\): ($rs.stderr | str trim)" }
+
+    step "verifying"
+    cd $d.abs
+    let lines = (open --raw $MANIFEST | lines | where $it != "")
+    let cmd = (hash-cmd)
+    let per = ([1 (($lines | length) / 8 | math ceil)] | math max)
+    let failed = ($lines | chunks $per | par-each {|c|
+        let part = (mktemp -t media-part.XXXXXX)
+        $c | str join "\n" | $in + "\n" | save -f $part
+        let r = (run-external $cmd.0 ...($cmd | skip 1) "-c" "--quiet" $part | complete)
+        rm -f $part
+        if $r.exit_code != 0 { $r.stdout + $r.stderr } else { null }
+    } | compact)
+    if not ($failed | is-empty) {
+        fail $"fetched files do not match the manifest; stub kept, server copy untouched:\n($failed | str join '' | lines | first 5 | str join "\n")"
+    }
+    rm -f $stub
+    log-event {time: (date now | format date "%Y-%m-%dT%H:%M:%S%:z"), action: fetch, path: $d.rel, host: (media-host), remote: $d.remote, bytes: $bytes}
+    step "done"
+}
+
+# Archive folders to the server: copy, verify every checksum there, then
+# replace each local folder with a MEDIA-ARCHIVED.md stub.
+def "main archive" [
+    ...dirs: string  # folders under your home directory
+    --dry-run        # check and report, copy and delete nothing
+] {
+    if ($dirs | is-empty) { fail "usage: media archive <dir>..." }
+    for dir in $dirs { archive-one $dir $dry_run }
+}
+
+# Bring archived folders back from the server and verify them.
+def "main fetch" [...dirs: string] {
+    if ($dirs | is-empty) { fail "usage: media fetch <dir>..." }
+    for dir in $dirs { fetch-one $dir }
+}
+
+# Re-check an archived folder's checksums on the server.
+def "main verify" [...dirs: string] {
+    for dir in $dirs {
+        let d = (resolve $dir)
+        verify-remote $d.remote
+        print $"ok  (media-host):($d.remote)"
+    }
+}
+
+# Walk the home folder and cache its biggest folders for `status` and `hook`.
+# Slow (minutes); run it from launchd, not by hand.
+def "main scan" [
+    --min-gb: int = 2  # smallest folder worth reporting
+] {
+    let min = $min_gb * 1024 * 1024
+    let rows = (^du -xk -d 6 -I Library -I .Trash $env.HOME | complete | get stdout | lines
+        | parse "{kb}\t{path}" | update kb { into int })
+    let big = ($rows | where kb >= $min and path != $env.HOME)
+    # A folder is reported when no single child holds half of it; then only
+    # the deepest such folders, so a parent never hides its heavy child.
+    let leafy = ($big | where {|r|
+        let kids = ($rows | where {|k| ($k.path | path dirname) == $r.path })
+        not ($kids | any {|k| $k.kb * 2 >= $r.kb })
+    })
+    let deepest = ($leafy | where {|r| not ($leafy | any {|o| $o.path | str starts-with $"($r.path)/" }) })
+    let folders = ($deepest
+        | where {|r| not ($r.path | path join $STUB | path exists) }
+        | sort-by kb --reverse
+        | each {|r| {path: ($r.path | path relative-to $env.HOME), bytes: ($r.kb * 1024)} })
+    mkdir (state-dir)
+    {scanned: (date now | format date "%Y-%m-%dT%H:%M:%S%:z"), folders: $folders}
+    | to json | save -f (state-dir | path join "scan.json")
+    print $"cached ($folders | length) folders over ($min_gb) GB"
+}
+
+def load-scan [] {
+    let p = (state-dir | path join "scan.json")
+    if ($p | path exists) { open $p } else { {scanned: null, folders: []} }
+}
+
+def archived-now [] {
+    let p = (state-dir | path join "log.jsonl")
+    if not ($p | path exists) { return [] }
+    open --raw $p | lines | where $it != "" | each { from json }
+    | group-by path | values | each { last }
+    | where action == "archive"
+    | where {|e| $env.HOME | path join $e.path $STUB | path exists }
+}
+
+# Free space, archived folders, and the biggest folders still only local.
+def "main status" [] {
+    let free = (local-free)
+    print $"laptop: ($free | into filesize) free"
+    let r = (ssh-run $"df -B1 --output=avail (sq (media-root)) | tail -1")
+    if $r.exit_code == 0 {
+        print $"(media-host): ($r.stdout | str trim | into int | into filesize) free in (media-root)"
+    } else {
+        print $"(media-host): unreachable"
+    }
+    let arch = (archived-now)
+    if not ($arch | is-empty) {
+        print "\narchived (stub here, files on the server):"
+        print ($arch | select path bytes time | update bytes { into filesize } | update time { str substring 0..9 } | table --index false)
+    }
+    let scan = (load-scan)
+    if $scan.scanned == null { print "\nno scan yet: run `media scan`"; return }
+    print $"\nbiggest local folders \(scan of ($scan.scanned | str substring 0..15 | str replace 'T' ' ')\):"
+    print ($scan.folders | first 15 | update bytes { into filesize } | table --index false)
+}
+
+# One line for a session-start hook when free space is low; silent otherwise.
+def "main hook" [] {
+    let total = ((^df -k $env.HOME | lines | last | split row --regex '\s+' | get 1 | into int) * 1024)
+    let free = (local-free)
+    let limit = ([(50 * 1000 * 1000 * 1000) ($total / 10)] | math max)
+    if $free >= $limit { return }
+    let top = (load-scan | get folders | first 3
+        | each {|f| $"~/($f.path) \(($f.bytes | into filesize)\)" } | str join ", ")
+    let pct = (100 - $free * 100 / $total | math round)
+    print $"Low disk: ($free | into filesize) free \(($pct)% full\). Biggest local folders: ($top). Move cold media to z840 with `media archive <dir>`; see `media status`."
+}
+
+def main [] {
+    print "media: keep big project media on z840; the laptop is a working cache.
+
+  media archive <dir>... [--dry-run]   copy to the server, verify, leave a stub
+  media fetch <dir>...                 bring back and verify
+  media verify <dir>...                re-check checksums on the server
+  media status                         free space, archived and big local folders
+  media scan                           refresh the folder cache \(slow\)
+  media hook                           one-line low-disk warning for session start"
+}
