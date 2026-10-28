@@ -317,7 +317,8 @@ def "main status" [] {
     print ($scan.folders | first 15 | update bytes { into filesize } | table --index false)
 }
 
-# One line for a session-start hook when free space is low; silent otherwise.
+# Claude Code SessionStart hook: when free space is low, one line shown to the
+# user and given to the model as context; silent otherwise.
 def "main hook" [] {
     let total = ((^df -k $env.HOME | lines | last | split row --regex '\s+' | get 1 | into int) * 1024)
     let free = (local-free)
@@ -326,7 +327,9 @@ def "main hook" [] {
     let top = (load-scan | get folders | first 3
         | each {|f| $"~/($f.path) \(($f.bytes | into filesize)\)" } | str join ", ")
     let pct = (100 - $free * 100 / $total | math round)
-    print $"Low disk: ($free | into filesize) free \(($pct)% full\). Biggest local folders: ($top). Move cold media to z840 with `media archive <dir>`; see `media status`."
+    let biggest = if $top == "" { "" } else { $" Biggest local folders: ($top)." }
+    let msg = $"Low disk: ($free | into filesize) free \(($pct)% full\).($biggest) Move cold media to z840 with `media archive <dir>`; see `media status`."
+    print ({systemMessage: $msg, hookSpecificOutput: {hookEventName: SessionStart, additionalContext: $msg}} | to json --raw)
 }
 
 def main [] {

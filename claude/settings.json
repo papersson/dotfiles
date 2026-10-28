@@ -97,6 +97,16 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/patrikpersson/.local/bin/media hook",
+            "timeout": 5
+          }
+        ]
       }
     ]
   },
