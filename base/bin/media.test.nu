@@ -93,12 +93,14 @@ let r = (media archive $fg)
 check "refuses a server folder media did not make" ($r.exit_code != 0 and (said $r "not made by media")) $r.stderr
 
 let g = ($fx | path join tracked)
-mkdir $g
-"x\n" | save ($g | path join f.txt)
+mkdir ($g | path join sub)
+"x\n" | save ($g | path join sub/f.txt)
 ^git -C $g init -q
-^git -C $g add f.txt
+^git -C $g add sub/f.txt
+let r = (media archive ($g | path join sub))
+check "refuses git-tracked files inside a repo" ($r.exit_code != 0 and (said $r "git-tracked")) $r.stderr
 let r = (media archive $g)
-check "refuses git-tracked files" ($r.exit_code != 0 and (said $r "git-tracked")) $r.stderr
+check "archives a whole repo from its root" ($r.exit_code == 0) $r.stderr
 
 let u = ($fx | path join unreach)
 mkdir $u

@@ -108,9 +108,11 @@ def archive-one [dir: string, dry_run: bool] {
     let d = (resolve $dir)
     if ($d.abs | path type) != "dir" { fail $"($d.abs) is not a directory" }
     if ($d.abs | path join $STUB | path exists) { fail $"($d.abs) is already archived" }
-    # Archiving tracked files would show up as deletions in a shared working tree.
+    # Archiving tracked files would show up as deletions in a shared working
+    # tree. A repository's own root is different: it moves whole, history and all.
+    let is_repo_root = ($d.abs | path join .git | path exists)
     let tracked = (^git -C $d.abs ls-files | complete)
-    if $tracked.exit_code == 0 and ($tracked.stdout | str trim) != "" {
+    if not $is_repo_root and $tracked.exit_code == 0 and ($tracked.stdout | str trim) != "" {
         fail $"($d.abs) contains git-tracked files; archive only untracked data"
     }
 
