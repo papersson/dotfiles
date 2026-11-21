@@ -106,3 +106,10 @@ source ~/dotfiles/base/nushell/autoload/starship.nu
 source ~/dotfiles/base/nushell/autoload/zoxide.nu
 source ~/dotfiles/base/nushell/autoload/atuin.nu
 source ~/dotfiles/base/nushell/autoload/carapace.nu
+
+# Rex integration (github.com/fdncred/nu-rex-integration): `nurx` commands,
+# plus tab status, last-value explore, per-project layouts and prod tint.
+# Hooks only inside Rex panes, so other terminals don't get Rex escape codes.
+# Must stay last: a later `$env.config.hooks.* = [...]` would drop the hooks.
+use ~/Developer/tools/nu-rex-integration/nurx.nu *
+if ($env.REX_BLOCK? | is-not-empty) { nurx enable status last layout tint }
