@@ -123,6 +123,11 @@ mkdir -p "$HOME/.config/ghostty"
 backup_and_link "$DOTFILES/base/ghostty/config" "$HOME/.config/ghostty/config"
 backup_and_link "$DOTFILES/base/ghostty/themes" "$HOME/.config/ghostty/themes"
 
+# Rex (only init.lua; rex-durable's install.sh writes rex_durable.lua beside it)
+header "Setting up Rex..."
+mkdir -p "$HOME/.config/rex"
+backup_and_link "$DOTFILES/base/rex/init.lua" "$HOME/.config/rex/init.lua"
+
 # Helix
 header "Setting up Helix..."
 backup_and_link "$DOTFILES/base/helix" "$HOME/.config/helix"
