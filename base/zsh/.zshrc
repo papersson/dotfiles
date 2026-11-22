@@ -174,3 +174,5 @@ export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 # This file is gitignored - create it manually on each machine
 # ------------------------------------------------------------------------------
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+. "$HOME/.local/bin/env"
