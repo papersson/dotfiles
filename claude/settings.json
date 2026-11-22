@@ -58,7 +58,10 @@
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:code.anthropic.com)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(sudo:*)"
+    ],
     "ask": [
       "Bash(git push:*)",
       "Bash(git pull:*)",
@@ -72,7 +75,7 @@
       "Bash(bun publish:*)",
       "Bash(uv publish:*)"
     ],
-    "defaultMode": "auto"
+    "defaultMode": "bypassPermissions"
   },
   "model": "opus",
   "hooks": {
@@ -107,6 +110,15 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'rex __internal session-start --agent claude 2>/dev/null || true'",
+            "timeout": 5
+          }
+        ]
       }
     ]
   },
@@ -122,7 +134,6 @@
     "worklog@papershop": true,
     "prose@papershop": true,
     "frontend-design@claude-plugins-official": true,
-    "runpod@runpod": false,
     "cloudflare@cloudflare": true,
     "studio@papershop": true,
     "screenshot-pane@papershop": false,
@@ -160,6 +171,7 @@
     }
   },
   "tui": "fullscreen",
+  "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
