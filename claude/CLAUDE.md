@@ -174,6 +174,17 @@ Multiple agents — and the user — may be working in the same repository at th
 
 Video, frame sequences, renders, datasets and other bulk files live on z840 (`/tank/archive`); this Mac is a working cache with a nearly full disk. When no one is working on such a folder, move it with `media archive <dir>`, which verifies every file on the server before it replaces the folder with a `MEDIA-ARCHIVED.md` stub. A folder holding that stub is archived: bring it back with `media fetch <dir>` instead of regenerating it. Never delete media any other way, and never write image data into logs; store the path or a hash.
 
+## Agent toolchain
+
+- **Rex** is the terminal; its startup hook and `rex` skill say how to drive it. z840 (`rex -S z840`, `ssh server`) is always on: put long agent runs there in a Rex window and poll, rather than blocking a Bash call.
+- **Codex and agy** give a second model family, for an independent review or a second opinion. Both bill against subscriptions; cache results when calling in a loop.
+  - Codex (default model from `~/.codex/config.toml`): `echo "<prompt>" | codex exec --skip-git-repo-check --ephemeral -s read-only -o out.md -`
+  - agy (Gemini): `agy -p "<prompt>" --model gemini-4-neon-high --print-timeout 0`. `agy models` lists models.
+- **atuin** records shell history and every Claude Code and Codex thread on this Mac (agy threads aren't captured); the `sh.atuin.daemon` launchd agent captures new ones. z840 has its own atuin, not synced with this one.
+  - To find earlier work by any agent, use the atuin MCP tools (`atuin_threads_search`, then `atuin_threads_read`) or `atuin threads search <words> --style json` instead of grepping `~/.claude/projects`.
+  - To hand a thread to another agent: `atuin resume <id> --in codex --print` writes it out as a Codex session and prints the command that resumes it. `--fork` copies it within the same agent.
+- **worklog** (skill) turns that history into reports, runbooks and CLAUDE.md rules.
+
 ## CLAUDE.md hierarchy
 
 CLAUDE.md files cascade by filesystem location. `~/.claude/CLAUDE.md` (this file) loads in every session; a project's root `CLAUDE.md` loads when cwd is inside that project; a subdirectory's `CLAUDE.md` loads when cwd is under it. Children **supplement**, not replace, parents — everything compounds into the same context.
