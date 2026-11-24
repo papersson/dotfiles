@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Keeps the atuin daemon running from login, so agent threads are captured
+  even when no terminal has run an atuin command yet (daemon.autostart only
+  starts it from a shell hook). install.sh copies this into
+  ~/Library/LaunchAgents and bootstraps it; autostart stays on as a fallback.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>sh.atuin.daemon</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/atuin</string>
+    <string>daemon</string>
+    <string>start</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>StandardOutPath</key>
+  <string>/tmp/atuin-daemon.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/atuin-daemon.log</string>
+</dict>
+</plist>

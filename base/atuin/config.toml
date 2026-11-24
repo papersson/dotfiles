@@ -1,5 +1,5 @@
 # Fuzzy search by default, prefix with ^ for exact match
-search_mode = "fuzzy"
+search_mode = "daemon-fuzzy"
 
 # Start in directory filter mode (most useful for project work)
 filter_mode = "directory"
@@ -26,3 +26,10 @@ history_filter = [
   "^export .*=",      # Don't store export commands with values
   "^source ",         # Don't store source commands
 ]
+
+[daemon]
+enabled = true
+autostart = true
+
+[threads]
+enabled = true

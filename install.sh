@@ -136,6 +136,14 @@ backup_and_link "$DOTFILES/base/helix" "$HOME/.config/helix"
 header "Setting up Atuin..."
 mkdir -p "$HOME/.config/atuin"
 backup_and_link "$DOTFILES/base/atuin/config.toml" "$HOME/.config/atuin/config.toml"
+# Daemon from login (thread capture needs it). Copied, not linked: launchd
+# reads agents from ~/Library/LaunchAgents and can skip symlinked plists.
+if [[ "$(uname)" == "Darwin" ]]; then
+    mkdir -p "$HOME/Library/LaunchAgents"
+    cp "$DOTFILES/base/atuin/sh.atuin.daemon.plist" "$HOME/Library/LaunchAgents/"
+    launchctl bootout "gui/$(id -u)/sh.atuin.daemon" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/sh.atuin.daemon.plist"
+fi
 
 # Starship (just needs the config symlink for STARSHIP_CONFIG to work)
 header "Setting up Starship..."
