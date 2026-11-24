@@ -52,6 +52,33 @@ rex.bind("resize/shift+j", "pane.resize", { amount = 1, direction = "down" })
 rex.bind("resize/shift+k", "pane.resize", { amount = 1, direction = "up" })
 rex.bind("resize/shift+l", "pane.resize", { amount = 1, direction = "right" })
 
+-- Agent threads: ctrl+a then t opens atuin's picker over every captured
+-- Claude Code and Codex thread in a new tab. Choosing one resumes it there
+-- (atuin cds to the thread's directory first); esc closes the tab. The
+-- picker is typed into a login shell rather than run as the block's command:
+-- the Rex server's PATH has no Homebrew, and the agent atuin starts needs the
+-- shell's full environment anyway.
+rex.action{
+  name = "atuin_resume",
+  title = "Resume Agent Thread",
+  description = "Pick a captured Claude Code or Codex thread with atuin and resume it in a new tab",
+  category = "Agents",
+  keywords = "atuin threads claude codex resume fork",
+  run = function(ctx)
+    local result, err = rex.session.new_window{
+      session_id = ctx.session_id,
+      window_label = "threads",
+      layout = rex.layout.block{
+        flavor = "com.superlogical.terminal.shell",
+        options = { initial_input = "atuin resume; exit\n" },
+      },
+    }
+    if err then error(err) end
+    return result
+  end,
+}
+rex.bind("ctrl+a>t", "atuin_resume")
+
 -- Add-ons installed outside dotfiles. On a fresh machine they may be missing,
 -- so load each one on its own and say so, instead of failing the whole config.
 local function load_addon(name, load)
