@@ -180,9 +180,9 @@ Video, frame sequences, renders, datasets and other bulk files live on z840 (`/t
 - **Codex and agy** give a second model family, for an independent review or a second opinion. Both bill against subscriptions; cache results when calling in a loop.
   - Codex (default model from `~/.codex/config.toml`): `echo "<prompt>" | codex exec --skip-git-repo-check --ephemeral -s read-only -o out.md -`
   - agy (Gemini): `agy -p "<prompt>" --model gemini-4-neon-high --print-timeout 0`. `agy models` lists models.
-- **atuin** records shell history and every Claude Code and Codex thread on this Mac (agy threads aren't captured); the `sh.atuin.daemon` launchd agent captures new ones. z840 has its own atuin, not synced with this one.
-  - To find earlier work by any agent, use the atuin MCP tools (`atuin_threads_search`, then `atuin_threads_read`) or `atuin threads search <words> --style json` instead of grepping `~/.claude/projects`.
-  - To hand a thread to another agent: `atuin resume <id> --in codex --print` writes it out as a Codex session and prints the command that resumes it. `--fork` copies it within the same agent.
+- **atuin** holds shell history and every Claude Code and Codex thread on this Mac, back to the first transcripts (agy threads aren't captured); the `sh.atuin.daemon` launchd agent captures new ones. z840 has its own atuin, not synced with this one.
+  - To find earlier work by any agent, use the atuin MCP tools (`atuin_threads_search`, then `atuin_threads_read`) or `atuin threads search <words> [--harness codex] --style json` instead of grepping `~/.claude/projects`. Each result's `session.atuin_id` is the thread id; its last 8 characters are enough.
+  - To hand a thread to another agent: `atuin resume <id> --in <agent> --print`, with `<agent>` one of `claude-code`, `codex`, `opencode`, `pi`, `copilot`. It writes the thread out as a new session of that agent and prints the command that resumes it. `--fork` instead makes a new session of the thread's own agent with the same history.
 - **worklog** (skill) turns that history into reports, runbooks and CLAUDE.md rules.
 
 ## CLAUDE.md hierarchy
