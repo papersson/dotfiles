@@ -1,3 +1,8 @@
+# Sync history and agent threads through my own server on z840 (services.atuin
+# in nixos-config), over Tailscale. The IP, not the MagicDNS name, because
+# MagicDNS is flaky on this Mac. Password: Keychain item "atuin-sync-z840".
+sync_address = "http://100.77.126.122:8888"
+
 # Fuzzy search by default, prefix with ^ for exact match
 search_mode = "daemon-fuzzy"
 
